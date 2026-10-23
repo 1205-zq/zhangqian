@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>字体图标与 SVG 图标</title>
+    <script src="./font/iconfont.js"></script>
+    <link rel="stylesheet" href="./css/svg.css" />
+  </head>
+  <body>
+    <h2>svg图标</h2>
+    <div class="tab-nav">
+      <div class="tab-item active" onclick="changeTab(this)">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-wode_2"></use>
+        </svg>
+        <span>我的</span>
+        
+        <div class="budge-dot" id="budge-mine"></div>
+      </div>
+      <div class="tab-item" onclick="changeTab(this)">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-gouwuche"></use>
+        </svg>
+        <span>购物车</span>
+        <div class="budge-num" id="budge-cart">2</div>
+      </div>
+      <div class="tab-item" onclick="changeTab(this)">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-zhuye"></use>
+        </svg>
+        <span>主页</span>
+        <div class="budge-dot max" id="budge-home">100+</div>
+      </div>
+    </div>
+    <script>
+      function changeTab(current) {
+        let tabs = document.querySelectorAll('.tab-item');
+        for (let i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove('active');
+        }
+        current.classList.add('active');
+      }
+    </script>
+  </body>
+</html>

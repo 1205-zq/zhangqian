@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LINEFORM · Lucide SVG 图标</title>
+    <style>
+      /* ========= Swiss 平面设计风（冷灰 + 荧光橙点缀 + 严格网格） ========= */
+      :root {
+        --zq_cInk: #1a1a1a;
+        --zq_cPaper: #f5f5f5;
+        --zq_cAccent: #ff6b35;
+        --zq_cGrey: #e0e0e0;
+        --zq_cText: #333333;
+        --zq_cMute: #999999;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--zq_cPaper);
+        color: var(--zq_cText);
+        font-family: "Inter", "Segoe UI", "Microsoft YaHei", sans-serif;
+        font-weight: 400;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: "cv11", "ss01";
+      }
+
+      /* 返回首页入口 */
+      .zq_nav {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--zq_cMute);
+        text-decoration: none;
+        padding: 8px 0;
+        border-bottom: 1px solid transparent;
+        transition: color 0.18s ease, border-color 0.18s ease;
+      }
+      .zq_nav::before {
+        content: "← ";
+        color: var(--zq_cAccent);
+      }
+      .zq_nav:hover,
+      .zq_nav:focus-visible {
+        color: var(--zq_cInk);
+        border-bottom-color: var(--zq_cAccent);
+        outline: none;
+      }
+
+      /* 顶栏极细分割线 */
+      .zq_topRule {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--zq_cInk);
+        z-index: 99;
+      }
+
+      /* Hero 区 */
+      .zq_hero {
+        padding: 140px 72px 100px;
+        border-bottom: 1px solid var(--zq_cInk);
+      }
+      .zq_heroNum {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--zq_cAccent);
+        margin-bottom: 28px;
+      }
+      .zq_heroTitle {
+        font-size: clamp(48px, 7vw, 96px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin: 0 0 24px;
+      }
+      .zq_heroTitle em {
+        font-style: normal;
+        font-weight: 300;
+        color: var(--zq_cAccent);
+      }
+      .zq_heroMeta {
+        display: flex;
+        gap: 48px;
+        flex-wrap: wrap;
+        padding-top: 28px;
+        border-top: 1px solid var(--zq_cGrey);
+      }
+      .zq_heroMeta div {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .zq_heroMeta b {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--zq_cInk);
+      }
+      .zq_heroMeta span {
+        font-size: 14px;
+        color: var(--zq_cMute);
+      }
+
+      /* 图标网格（严格 4 列，每列 140px 宽的内容卡片） */
+      .zq_section {
+        padding: 80px 72px 100px;
+      }
+      .zq_sectionLabel {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--zq_cMute);
+        margin-bottom: 36px;
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .zq_sectionLabel span:last-child {
+        color: var(--zq_cAccent);
+      }
+
+      .zq_grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        border-top: 1px solid var(--zq_cInk);
+        border-left: 1px solid var(--zq_cInk);
+      }
+      .zq_cell {
+        border-right: 1px solid var(--zq_cInk);
+        border-bottom: 1px solid var(--zq_cInk);
+        padding: 32px 28px;
+        background: var(--zq_cPaper);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        transition: background 0.2s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .zq_cell::after {
+        /* hover 时左侧橙色竖条 */
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 0;
+        background: var(--zq_cAccent);
+        transition: width 0.2s ease;
+      }
+      .zq_cell:hover,
+      .zq_cell:focus-within {
+        background: #fff;
+      }
+      .zq_cell:hover::after,
+      .zq_cell:focus-within::after {
+        width: 4px;
+      }
+
+      /* 图标本体（Lucide 渲染的 SVG） */
+      .zq_cell .lucide {
+        width: 32px;
+        height: 32px;
+        stroke: var(--zq_cInk);
+        stroke-width: 1.75;
+        transition: stroke 0.18s ease, stroke-width 0.18s ease, transform 0.25s ease;
+      }
+      .zq_cell:hover .lucide,
+      .zq_cell:focus-within .lucide {
+        stroke: var(--zq_cAccent);
+        stroke-width: 2.2;
+        transform: scale(1.08);
+      }
+
+      .zq_cellName {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--zq_cInk);
+      }
+      .zq_cellTag {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--zq_cMute);
+      }
+      .zq_cell:hover .zq_cellTag {
+        color: var(--zq_cAccent);
+      }
+
+      /* 关于区块 */
+      .zq_about {
+        padding: 100px 72px;
+        background: var(--zq_cInk);
+        color: var(--zq_cPaper);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+      }
+      .zq_about h2 {
+        font-size: clamp(28px, 3.5vw, 44px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 28px;
+      }
+      .zq_about p {
+        font-size: 15px;
+        line-height: 1.9;
+        color: rgba(245, 245, 245, 0.78);
+        margin: 0 0 16px;
+      }
+      .zq_aboutSpec {
+        border-top: 1px solid rgba(245, 245, 245, 0.18);
+        padding-top: 28px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        row-gap: 20px;
+      }
+      .zq_aboutSpec dt {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--zq_cAccent);
+        margin-bottom: 4px;
+      }
+      .zq_aboutSpec dd {
+        margin: 0;
+        font-size: 14px;
+        color: rgba(245, 245, 245, 0.88);
+      }
+
+      /* 页脚 */
+      .zq_footer {
+        padding: 32px 72px;
+        background: var(--zq_cPaper);
+        border-top: 1px solid var(--zq_cInk);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .zq_footer a {
+        color: var(--zq_cAccent);
+        text-decoration: none;
+      }
+      .zq_footer a:hover {
+        color: var(--zq_cInk);
+      }
+
+      @media (max-width: 900px) {
+        .zq_nav {
+          top: 14px;
+          font-size: 11px;
+        }
+        .zq_hero {
+          padding: 90px 24px 60px;
+        }
+        .zq_section,
+        .zq_about {
+          padding: 56px 24px 72px;
+        }
+        .zq_grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .zq_about {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+        .zq_footer {
+          padding: 20px 24px;
+          flex-direction: column;
+          gap: 12px;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="zq_topRule"></div>
+
+    <!-- 返回首页入口（瑞士风：极细分割 + 橙色箭头） -->
+    <a href="./index.html" class="zq_nav" aria-label="返回首页">Index</a>
+
+    <!-- Hero -->
+    <header class="zq_hero">
+      <div class="zq_heroNum">LUCIDE · SVG · 02</div>
+      <h1 class="zq_heroTitle">LINE<em>FORM</em></h1>
+      <div class="zq_heroMeta">
+        <div>
+          <b>Style</b>
+          <span>Stroke · 24×24</span>
+        </div>
+        <div>
+          <b>Count</b>
+          <span>1400+ 线性图标</span>
+        </div>
+        <div>
+          <b>Format</b>
+          <span>Inline SVG</span>
+        </div>
+        <div>
+          <b>Render</b>
+          <span>via <code>lucide.createIcons()</code></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 图标网格 -->
+    <main class="zq_section">
+      <div class="zq_sectionLabel">
+        <span>A · Design Toolkit</span>
+        <span>16 / icons</span>
+      </div>
+
+      <div class="zq_grid">
+        <!-- Lucide 的官方方式：<i data-lucide="name"></i> 由 JS 替换为 SVG -->
+        <div class="zq_cell"><i data-lucide="palette" aria-hidden="true"></i><div><div class="zq_cellName">Palette</div><div class="zq_cellTag">design · color</div></div></div>
+        <div class="zq_cell"><i data-lucide="square" aria-hidden="true"></i><div><div class="zq_cellName">Square</div><div class="zq_cellTag">primitive</div></div></div>
+        <div class="zq_cell"><i data-lucide="circle" aria-hidden="true"></i><div><div class="zq_cellName">Circle</div><div class="zq_cellTag">primitive</div></div></div>
+        <div class="zq_cell"><i data-lucide="triangle" aria-hidden="true"></i><div><div class="zq_cellName">Triangle</div><div class="zq_cellTag">primitive</div></div></div>
+
+        <div class="zq_cell"><i data-lucide="feather" aria-hidden="true"></i><div><div class="zq_cellName">Feather</div><div class="zq_cellTag">tool</div></div></div>
+        <div class="zq_cell"><i data-lucide="code" aria-hidden="true"></i><div><div class="zq_cellName">Code</div><div class="zq_cellTag">dev</div></div></div>
+        <div class="zq_cell"><i data-lucide="heart" aria-hidden="true"></i><div><div class="zq_cellName">Heart</div><div class="zq_cellTag">symbol</div></div></div>
+        <div class="zq_cell"><i data-lucide="star" aria-hidden="true"></i><div><div class="zq_cellName">Star</div><div class="zq_cellTag">symbol</div></div></div>
+
+        <div class="zq_cell"><i data-lucide="pen-tool" aria-hidden="true"></i><div><div class="zq_cellName">Pen Tool</div><div class="zq_cellTag">design · vector</div></div></div>
+        <div class="zq_cell"><i data-lucide="pencil" aria-hidden="true"></i><div><div class="zq_cellName">Pencil</div><div class="zq_cellTag">tool</div></div></div>
+        <div class="zq_cell"><i data-lucide="brush" aria-hidden="true"></i><div><div class="zq_cellName">Brush</div><div class="zq_cellTag">design</div></div></div>
+        <div class="zq_cell"><i data-lucide="wand-2" aria-hidden="true"></i><div><div class="zq_cellName">Wand 2</div><div class="zq_cellTag">magic</div></div></div>
+
+        <div class="zq_cell"><i data-lucide="gem" aria-hidden="true"></i><div><div class="zq_cellName">Gem</div><div class="zq_cellTag">premium</div></div></div>
+        <div class="zq_cell"><i data-lucide="compass" aria-hidden="true"></i><div><div class="zq_cellName">Compass</div><div class="zq_cellTag">navigate</div></div></div>
+        <div class="zq_cell"><i data-lucide="lightbulb" aria-hidden="true"></i><div><div class="zq_cellName">Lightbulb</div><div class="zq_cellTag">idea</div></div></div>
+        <div class="zq_cell"><i data-lucide="layers" aria-hidden="true"></i><div><div class="zq_cellName">Layers</div><div class="zq_cellTag">design</div></div></div>
+      </div>
+    </main>
+
+    <!-- 关于区块 -->
+    <section class="zq_about">
+      <div>
+        <h2>SVG · Inline</h2>
+        <p>
+          Lucide 选择了一条完全不同的分发路线：不以字体（font）形式，
+          而是以 SVG 图形（inline SVG）直接注入 DOM。这意味着每个图标都是一个
+          真正的 <code>&lt;svg&gt;</code> 元素，可以被单独控制 stroke、fill、
+          viewport，也不依赖任何 Web Font 加载。
+        </p>
+        <p>
+          本页通过本地 <code>./cdn/lucide/lucide.min.js</code>（UMD 构建）加载，
+          HTML 中只写 <code>&lt;i data-lucide="palette"&gt;</code>，
+          页面加载后由 <code>lucide.createIcons()</code> 批量替换。
+        </p>
+      </div>
+      <dl class="zq_aboutSpec">
+        <div><dt>Library</dt><dd>Lucide Icons</dd></div>
+        <div><dt>Version</dt><dd>0.451.0</dd></div>
+        <div><dt>Count</dt><dd>1400+ 线性图标</dd></div>
+        <div><dt>License</dt><dd>ISC</dd></div>
+        <div><dt>Format</dt><dd>Inline SVG</dd></div>
+        <div><dt>Local Path</dt><dd>./cdn/lucide/</dd></div>
+      </dl>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="zq_footer">
+      <span>LINEFORM · SVG Icon Handbook</span>
+      <span><a href="./index.html">← BACK TO INDEX</a></span>
+    </footer>
+
+    <!-- 本地 Lucide UMD -->
+    <script src="./cdn/lucide/lucide.min.js"></script>
+    <script>
+      // zq_ 前缀的 JS 变量 + 官方 API
+      var zq_lucideInitDone = false;
+      if (window.lucide && typeof window.lucide.createIcons === "function") {
+        window.lucide.createIcons();
+        zq_lucideInitDone = true;
+      } else {
+        console.warn("[zq] lucide UMD 未加载，data-lucide 无法替换为 SVG");
+      }
+    </script>
+  </body>
+</html>

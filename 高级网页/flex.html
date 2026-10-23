@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flex布局复习</title>
+    <link rel="stylesheet" href="./css/flex.css">
+    <!-- 引入阿里巴巴iconfont图标库 -->
+    <link rel="stylesheet" href="./font/iconfont.css">
+
+</head>
+<!-- h5语义标签header、footer、nav、main、article、section、aside
+ 本质上都是div -->
+<body>
+    <header class="page-header">
+        <h2>Flex布局复习</h2>
+    </header>
+    <main class="page-main">
+        <!-- 案例一、导航布局 -->
+        <section class="case">
+            <h2 class="case-title">案例一、导航布局</h2>
+            <nav class="nav-bar">
+                <a href="#" class="logo">MyWebsite</a>
+                <!-- 快捷输入：ul>li*4（ul下面有4个li） -->
+                <ul class="nav-list">
+                    <li><a href="#">首页</a></li>
+                    <li><a href="#">关于</a></li>
+                    <li><a href="#">服务</a></li>
+                    <li><a href="#">联系</a></li>
+                </ul>
+            </nav>
+        </section>
+        <!-- 案例二、三等分布局 -->
+        <section class="case">
+            <h2 class="case-title">案例二、三等分布局</h2>
+            <div class="three-columns">
+                <div class="column">第一列</div>
+                <div class="column">第二列</div>
+                <div class="column">第三列</div>
+            </div>
+        </section>
+        <!-- 案例三，响应式卡片网格 -->
+        <section class="case">
+            <h2 class="case-title">案例三，响应式卡片网格</h2>
+            <div class="card-grid">
+                <div class="card">卡片1</div>
+                <div class="card">卡片2</div>
+                <div class="card">卡片3</div>
+                <div class="card">卡片4</div>
+            </div>
+        </section>
+        <!-- 案例四：侧边栏布局 -->
+        <section class="case">
+            <h2 class="case-title">案例四，侧边栏布局</h2>
+            <div class="sidebar">
+                <aside>侧边栏</aside>
+                <div class="main-content">
+                    主要内容
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

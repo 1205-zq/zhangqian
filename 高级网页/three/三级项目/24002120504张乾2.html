@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>资料库页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#388BFF',
+                        redBadge: '#FF4D4F',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+            background: #ffffff;
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto bg-white min-h-screen relative pb-20">
+    <!-- 顶部搜索框 -->
+    <div class="px-4 py-4">
+        <div class="bg-gray-100 rounded-xl flex items-center px-4 py-3">
+            <i class="fa fa-search text-gray-400 mr-2"></i>
+            <input type="text" placeholder="线性代数" class="bg-transparent flex-1 outline-none text-sm">
+        </div>
+    </div>
+    <!-- 横向功能标签 -->
+    <div class="px-4 overflow-x-auto no-scrollbar">
+        <div class="flex gap-4 pb-2">
+            <div class="min-w-fit px-4 py-3 rounded-2xl border-2 border-primary bg-blue-50 text-center">
+                <div class="w-10 h-10 mx-auto"><i class="fa fa-file-text-o text-primary text-2xl"></i></div>
+                <div class="text-sm font-medium mt-1">本校真题</div>
+            </div>
+            <div class="min-w-fit px-4 py-3 rounded-2xl bg-gray-50 text-center">
+                <div class="w-10 h-10 mx-auto text-green-500 text-2xl">4</div>
+                <div class="text-sm font-medium mt-1">英语四级</div>
+            </div>
+            <div class="min-w-fit px-4 py-3 rounded-2xl bg-gray-50 text-center">
+                <div class="w-10 h-10 mx-auto text-yellow-500 text-2xl">=</div>
+                <div class="text-sm font-medium mt-1">课后习题</div>
+            </div>
+            <div class="min-w-fit px-4 py-3 rounded-2xl bg-gray-50 text-center">
+                <div class="w-10 h-10 mx-auto text-red-500 text-2xl"><i class="fa fa-star"></i></div>
+                <div class="text-sm font-medium mt-1">实用范文</div>
+            </div>
+            <div class="min-w-fit px-4 py-3 rounded-2xl bg-gray-50 text-center">
+                <div class="w-10 h-10 mx-auto text-sky-500 text-2xl"><i class="fa fa-flag"></i></div>
+                <div class="text-sm font-medium mt-1">入党资料</div>
+            </div>
+        </div>
+    </div>
+    <!-- 筛选栏 -->
+    <div class="px-4 py-4 flex justify-between items-center">
+        <span class="text-lg font-medium">全部</span>
+        <div class="flex gap-4 text-sm text-gray-600">
+            <span>全部学校 <i class="fa fa-chevron-down text-xs"></i></span>
+            <span>全部年份 <i class="fa fa-chevron-down text-xs"></i></span>
+        </div>
+    </div>
+    <!-- 左右分栏 侧边分类 + 资料列表 -->
+    <div class="flex">
+        <!-- 左侧分类栏 -->
+        <div class="w-28 bg-gray-50 min-h-[calc(100vh-260px)]">
+            <div class="py-3 text-center text-gray-800 bg-white">全部</div>
+            <div class="py-3 text-center text-gray-500">高等数学</div>
+            <div class="py-3 text-center text-gray-500">大学语文</div>
+            <div class="py-3 text-center text-gray-500">大学英语</div>
+            <div class="py-3 text-center text-gray-500">大学物理</div>
+            <div class="py-3 text-center text-gray-500">力学</div>
+            <div class="py-3 text-center text-gray-500">概率论与数理统计</div>
+            <div class="py-3 text-center text-gray-500">计算机基础</div>
+            <div class="py-3 text-center text-gray-500">计算机专业</div>
+            <div class="py-3 text-center text-gray-500">材料专业</div>
+            <div class="py-3 text-center text-gray-500">电子专业</div>
+        </div>
+        <!-- 右侧资料列表 -->
+        <div class="flex-1 px-3">
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">清华大学《大学英语》2022-2023学年第一学期...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>10.0w</span>
+                        <span><i class="fa fa-download mr-1"></i>2618</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">北京大学《计算机基础》2022-2023学年第一学期...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>2.8w</span>
+                        <span><i class="fa fa-download mr-1"></i>1290</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">中国人民大学《马克思主义基本原理》2020-2021学...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>5.0w</span>
+                        <span><i class="fa fa-download mr-1"></i>1434</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">复旦大学《大学物理III》2020-2021学年第一学期...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>1.6w</span>
+                        <span><i class="fa fa-download mr-1"></i>1149</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">中山大学《大学英语》2020-2021学年第一学期...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>1.5w</span>
+                        <span><i class="fa fa-download mr-1"></i>1450</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-3 py-3 border-b">
+                <div class="w-20 h-28 bg-gray-100 rounded-lg relative">
+                    <div class="absolute bottom-1 right-1 w-6 h-6 rounded bg-orange-400 text-white flex items-center justify-center text-xs">📂</div>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm">中国政法大学《马克思主义基本原理》2020-2021第...</p>
+                    <div class="flex gap-4 mt-3 text-xs text-gray-500">
+                        <span><i class="fa fa-eye mr-1"></i>1.9w</span>
+                        <span><i class="fa fa-download mr-1"></i>1985</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部Tab导航 -->
+    <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white shadow-md">
+        <div class="grid grid-cols-5 py-3">
+            <div class="text-center text-gray-500">
+                <i class="fa fa-home text-xl block"></i>
+                <div class="text-xs mt-1">首页</div>
+            </div>
+            <div class="text-center text-primary">
+                <i class="fa fa-folder-o text-xl block"></i>
+                <div class="text-xs mt-1">资料库</div>
+            </div>
+            <div class="text-center text-gray-500">
+                <i class="fa fa-crown text-xl block"></i>
+                <div class="text-xs mt-1">VIP</div>
+            </div>
+            <div class="text-center text-gray-500">
+                <i class="fa fa-comment-o text-xl block"></i>
+                <div class="text-xs mt-1">推荐</div>
+            </div>
+            <div class="text-center text-gray-500 relative">
+                <span class="absolute top-0 right-4 w-2 h-2 bg-redBadge rounded-full"></span>
+                <i class="fa fa-user-o text-xl block"></i>
+                <div class="text-xs mt-1">我</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

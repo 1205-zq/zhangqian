@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件的冒泡与捕获</title>
+    <style>
+        .box {
+            width: 400px;
+            height: 400px;
+            background-color: red;
+        }
+        #h2 {
+            width: 200px;
+            height: 200px;
+            background-color: blue;
+        }
+        #em {
+            width: 100px;
+            height: 100px;
+            background-color: yellow;
+        }
+    </style>
+    <!-- 冒泡：事件会从最里层开始，逐层向上传播，直到document对象。
+     ——冒泡是从子元素到父元素依次触发 
+     捕获：事件会从最外层开始，逐层向下传播。先出发父元素，再触发子元素
+-->
+</head>
+<body>
+    <button  id="myButton" onclick="clickFun()">点击事件</button>
+    <div class="box">
+        <h2 id="h2">是冒泡还是<em id="em">捕获</em></h2>
+    </div>
+    <input type="text" id="input" placeholder="请输入内容">
+</body>
+</html>

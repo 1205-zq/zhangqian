@@ -1,0 +1,72 @@
+.icon {
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
+      }
+      *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Microsoft YaHei", sans-serif;
+      }
+      .tab-nav{
+        position:fixed;
+        bottom:0;
+        left:0;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        background-color:#fff;
+        width:100%;
+        border-top:1px solid #ccc;
+      }
+      .tab-item{
+        flex:1;
+        display:flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color:#333;
+        position:relative;
+      }
+      .tab-item svg{
+        font-size: 24px;
+        margin:5px;
+        
+      }
+      .tab-item.active{
+        color:#ff6347;
+      }
+      .budge-dot{
+        position:absolute;
+        top: 4px;
+        right: 30px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: red; 
+      }
+
+      .budge-num{
+        position:absolute;
+        top: 0px;
+        right: 30px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        background-color: red; 
+        color:#fff;
+        font-size:12px;
+        text-align:center;
+        line-height:16px;
+      } 
+      /*交集选择器*/
+      .budge-dot.max{
+        font-size: 10px;
+        width: 16px;
+        height: 16px;
+      }

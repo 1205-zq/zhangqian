@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>高级网页设计｜课堂实践</title>
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #7c3aed;
+        --text: #172033;
+        --muted: #64748b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family: "Microsoft YaHei", sans-serif;
+        background: linear-gradient(135deg, #dbeafe, #f5f3ff);
+      }
+
+      .hero {
+        padding: 75px 20px 120px;
+        color: white;
+        text-align: center;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        clip-path: ellipse(90% 72% at 50% 25%);
+      }
+
+      .hero h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 6vw, 4rem);
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      main {
+        width: min(1100px, calc(100% - 32px));
+        margin: -65px auto 40px;
+      }
+
+      h2 {
+        margin-bottom: 22px;
+      }
+
+      .catalog {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+      }
+
+      .card,
+      .prompt {
+        padding: 26px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 12px 30px rgba(30, 41, 59, 0.12);
+      }
+
+      .card {
+        transition: 0.25s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 18px 38px rgba(30, 41, 59, 0.2);
+      }
+
+      .icon {
+        font-size: 42px;
+      }
+
+      .card h3 {
+        margin: 14px 0 10px;
+      }
+
+      .card p {
+        min-height: 52px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .card a {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        text-decoration: none;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        transition: 0.2s ease;
+      }
+
+      .card a:hover,
+      .card a:focus-visible {
+        outline: 2px solid var(--secondary);
+        outline-offset: 3px;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+      }
+
+      .prompt {
+        margin-top: 30px;
+        line-height: 1.8;
+      }
+
+      .prompt h2 {
+        margin-top: 0;
+      }
+
+      footer {
+        padding: 24px;
+        color: var(--muted);
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="hero">
+      <h1>高级网页设计</h1>
+      <p>张乾的课堂实践</p>
+    </header>
+
+    <main>
+      <h2>实践项目入口目录</h2>
+
+      <section class="catalog">
+        <article class="card">
+          <div class="icon" aria-hidden="true">📐</div>
+          <h3>Flex 复习</h3>
+          <p>复习导航布局、三等分布局、响应式卡片和侧边栏布局。</p>
+          <a href="./flex.html">进入 Flex 复习</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🎨</div>
+          <h3>字体图标</h3>
+          <p>学习 SVG 图标、字体图标及标签切换交互效果。</p>
+          <a href="./svg.html">进入字体图标</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">💻</div>
+          <h3>JS 数据类型与运算符</h3>
+          <p>练习 typeof 类型判断、类型转换、NaN、数值解析和累加计算。</p>
+          <a href="./js.html">进入 JS 基础练习</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🔢</div>
+          <h3>数据类型与运算符练习</h3>
+          <p>通过数字规律小练习巩固数据类型与运算符知识。</p>
+          <a href="./dadeType.html">进入数据类型练习</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🃏</div>
+          <h3>JS 对象的应用</h3>
+          <p>使用个人明信片案例练习对象属性与方法。</p>
+          <a href="./jsduixiang.html">进入对象应用</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🎲</div>
+          <h3>JS 函数</h3>
+          <p>通过随机数猜数游戏练习函数定义、调用与条件判断。</p>
+          <a href="./jshanshu.html">进入函数练习</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🧑‍🎓</div>
+          <h3>JS 对象基础</h3>
+          <p>使用学号、姓名、班级等属性创建学生对象。</p>
+          <a href="./obj.html">进入对象练习</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🧩</div>
+          <h3>Iconfont 图标演示</h3>
+          <p>查看本地字体图标资源的图标列表与使用示例。</p>
+          <a href="./font/demo_index.html">进入图标演示</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🔴</div>
+          <h3>Font Awesome · 字体图标</h3>
+          <p>Bauhaus 艺术品牌风：Font Awesome Free 以 Web Font 形式分发的图标展示。</p>
+          <a href="./iconfont-1.html">进入 Font Awesome</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">🔷</div>
+          <h3>Lucide · SVG 图标</h3>
+          <p>Swiss 平面设计风：Lucide 通过 inline SVG 注入的线性图标展示。</p>
+          <a href="./inconfont-2.html">进入 Lucide</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">📱</div>
+          <h3>移动端底栏 · 字体图标</h3>
+          <p>使用本地 iconfont 字体图标的移动端固定底部导航，带数字徽章和红点提示。</p>
+          <a href="./iconfont-3.html">进入 iconfont-3</a>
+        </article>
+
+        <article class="card">
+          <div class="icon" aria-hidden="true">📲</div>
+          <h3>移动端底栏 · SVG</h3>
+          <p>使用本地 iconfont SVG sprite 的移动端固定底部导航，带数字徽章和红点提示。</p>
+          <a href="./iconfont-4.html">进入 iconfont-4</a>
+        </article>
+      </section>
+
+      <section class="prompt" id="prompt">
+        <h2>本页面创建提示词</h2>
+        <p>
+          创建一个新页面，包括本目录下的所有网页的超链接，使用原生代码，不使用cdn，
+          新页面名称为index.html，主题为《高级网页设计》课堂实践，美化页面，
+          课堂目录中包含本目录下所有实践网页的入口，页面中包括本提示词。
+          当前目录入口已覆盖 Flex、字体图标、JavaScript 练习及 Iconfont 图标演示。
+        </p>
+      </section>
+    </main>
+
+    <footer>张乾 · 高级网页设计课堂实践</footer>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS对象</title>
+    <!-- 类 实例就是对象,两个要素, 属性和方法
+     学生的属性：学号、性别、姓名、班级
+     方法：学习、考试、请假 -->
+</head>
+<body>
+    <script>
+        // 定义一个学生对象
+        var student = {
+            id: "2021001",
+            name: "张三",
+            gender: "男",
+            class: "计算机科学与技术",
+            hobby:['看电影','游戏','旅游'],
+            study: function() {
+                console.log(this.name + "正在学习。");
+            },
+            exam: function() {
+                console.log(this.name + "正在考试。");
+            },
+            leave: function() {
+                console.log(this.name + "请假了。");
+            }
+        };
+        console.log(student.name);
+        console.log(student.id);
+        // 调用学生对象的方法
+        student.study();
+        student.exam();
+        student.leave();
+        // 删除对象方法
+        delete student.exam;
+        console.log(student.exam);
+        // 判断对象中是否有某个属性或则方法
+        console.log("name" in student);
+        // 遍历对象
+        for (var key in student) {
+            console.log(key,student[key]);
+        }
+        //对象赋值就是复制了引用的地址，相当于起别名，多个变量指向同一个对象
+        var o=student;
+        console.log(o.name);
+        //对象引用类型（引用的是地址）
+        o.name='王五';
+        console.log("o的名字"+o.name);
+        console.log("student的名字"+student.name);
+
+
+    </script>
+</body>
+</html>

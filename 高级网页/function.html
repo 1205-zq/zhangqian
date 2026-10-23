@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抓小球游戏|函数的三个方法的应用</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f8ff;
+            height: 100vh;
+            overflow: hidden;
+            font-size: 24px;
+        }
+
+        #info {
+            padding: 16px;
+            background: #222;
+            color: #fff;
+        }
+
+        .ball {
+            width: 50px;
+            height: 50px;
+            background: red;
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info">当前分数：<span id="score">0</span></div>
+    <div class="ball" id="ball"></div>
+
+    <script>
+        // const是常量指的是变量的引用地址不能变，不是对象里面的数据不能改。
+        const game = {
+            score: 0,
+            ballDom: document.getElementById("ball"),
+            width: 50,
+            height: 50
+        };//需要什么函数：小球移动、小球点击、空白点击、更新分数
+
+        // 问题：如果不减去小球的宽度，直接写 Math.random() * window.innerWidth 会怎么样？
+        function moveBall() {
+            // 保证小球在屏幕内
+            const maxX = window.innerWidth - game.width;
+            const maxY = window.innerHeight - game.height;
+            // 小球随机位置是0-窗口宽度取整
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            // 移动小球
+            game.ballDom.style.left = randomX + "px";
+            game.ballDom.style.top = randomY + "px";
+        }
+        // 更新分数
+        // 普通的函数存在函数提升：函数体在后面，函数的调用在前面，
+        // 有this、arguments：类数组对象，函数在调用时候传递过来的实参数字对象
+        function updateScore() {
+            // function updateScore(a,b)
+            // a=arguments[0]
+            // b=arguments[1]
+            document.getElementById("score").innerText = game.score;
+        }
+        game.ballDom.addEventListener("click", function (e) {
+            // 匿名函数有 this → 当前点击的DOM元素（.ball）
+            game.score += 2;
+            updateScore();//函数调用
+            moveBall();
+            // 阻止冒泡
+            e.stopPropagation();
+        });
+        // 点击空白区域扣分
+        document.body.addEventListener("click", function (e) {
+
+            game.score -= 1;
+
+            updateScore();
+
+        });
+        window.addEventListener("resize", function () {
+            moveBall();
+        });
+
+
+
+
+        moveBall();
+    </script> 
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+# 系统 / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 本地会话 / 工具生成
+.workbuddy/
+.trae-cn/
+node_modules/
+
+# 临时脚本
+_*.js
+_*.ps1
+
+# 本地产物
+dist/
+build/
+*.log
+*.tmp

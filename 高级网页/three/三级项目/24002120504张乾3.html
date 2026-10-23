@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP页面</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#388BFF',
+                        vipBg: '#F9C868',
+                        vipCard: '#FFF3D9',
+                        orangeBtn: '#FF7A2F',
+                        redBadge: '#FF4D4F',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+            background: #f7f8fa;
+        }
+    </style>
+</head>
+<body class="max-w-md mx-auto min-h-screen pb-20">
+    <!-- 顶部黄色头部 -->
+    <div class="bg-vipBg px-5 pt-8 pb-4">
+        <!-- 顶部Tab -->
+        <div class="flex gap-8 mb-6">
+            <span class="text-white text-xl font-bold border-b-2 border-white pb-1">VIP</span>
+            <span class="text-white/80 text-xl">听学</span>
+            <span class="text-white/80 text-xl">志愿</span>
+        </div>
+
+        <!-- VIP卡片 -->
+        <div class="bg-vipCard rounded-2xl p-5 shadow-sm">
+            <!-- 用户信息行 -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center">
+                        <i class="fa fa-user text-gray-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl font-bold text-amber-800">152****7183</span>
+                            <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded-md">Lv1</span>
+                        </div>
+                        <p class="text-amber-700 text-sm mt-1">VIP会员免费学习所有内容</p>
+                    </div>
+                </div>
+                <button class="bg-orangeBtn text-white text-lg font-medium px-6 py-2.5 rounded-full">立即开通</button>
+            </div>
+
+            <!-- VIP功能图标横向滚动 -->
+            <div class="flex mt-6 overflow-x-auto no-scrollbar gap-4">
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-play-circle text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">视频讲题</span>
+                </div>
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-comments text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">VIP问答</span>
+                </div>
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-book text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">保存教辅</span>
+                </div>
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-file-text text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">试卷讲解</span>
+                </div>
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-download text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">试卷下载</span>
+                </div>
+                <div class="flex flex-col items-center min-w-fit">
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-shopping-bag text-amber-600 text-xl"></i>
+                    </div>
+                    <span class="text-amber-800 text-sm mt-2">商</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-4 -mt-2">
+        <!-- 三卡片行 -->
+        <div class="grid grid-cols-3 gap-3">
+            <div class="bg-white rounded-xl p-4 relative">
+                <span class="absolute top-2 right-2 w-2 h-2 bg-redBadge rounded-full"></span>
+                <p class="text-lg font-bold text-gray-800">赠好友VIP</p>
+                <p class="text-gray-500 text-sm mt-1">定制专属心意</p>
+            </div>
+            <div class="bg-white rounded-xl p-4">
+                <p class="text-lg font-bold text-gray-800">热搜TOP</p>
+                <p class="text-gray-500 text-sm mt-1">教研精选</p>
+            </div>
+            <div class="bg-white rounded-xl p-4">
+                <p class="text-lg font-bold text-gray-800">超多福利</p>
+                <p class="text-gray-500 text-sm mt-1">月卡每月领</p>
+            </div>
+        </div>
+
+        <!-- 签到礼包栏 -->
+        <div class="bg-white rounded-xl p-4 mt-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                    <i class="fa fa-user-circle-o text-amber-600"></i>
+                </div>
+                <span class="text-lg font-medium">签到领会员专享礼包</span>
+            </div>
+            <button class="bg-amber-100 text-amber-700 px-5 py-2 rounded-full">去领取</button>
+        </div>
+
+        <!-- 试卷试题区域 -->
+        <div class="bg-white rounded-xl p-5 mt-4">
+            <h2 class="text-2xl font-bold text-gray-900 mb-5">试卷试题</h2>
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-5 bg-amber-400 rounded"></div>
+                    <span class="text-lg font-medium">试卷下载</span>
+                </div>
+                <span class="text-gray-500 text-sm">查看更多 <i class="fa fa-angle-right"></i></span>
+            </div>
+            <!-- 标签 -->
+            <div class="flex gap-3 mb-5">
+                <span class="bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm">期末</span>
+                <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm">期中</span>
+                <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm">月考</span>
+                <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm">真题</span>
+                <span class="bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm">模拟</span>
+            </div>
+
+            <!-- 试卷列表 -->
+            <div class="space-y-6">
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">2026年·六年级(上)</p>
+                    <div class="flex justify-between items-center">
+                        <p class="text-base font-medium">辽宁大连市甘井子区2025-2026学年六年级上学期期末语文试题</p>
+                        <i class="fa fa-angle-right text-gray-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">2026年·六年级(上)</p>
+                    <div class="flex justify-between items-center">
+                        <p class="text-base font-medium">辽宁大连市甘井子区2025-2026学年上学期期末检测试卷六年级英语</p>
+                        <i class="fa fa-angle-right text-gray-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">2026年·六年级(下)</p>
+                    <div class="flex justify-between items-center">
+                        <p class="text-base font-medium">2025-2026学年辽宁省大连市中山区六年级下学期语文期末试卷</p>
+                        <i class="fa fa-angle-right text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部Tab导航 -->
+    <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white shadow-md">
+        <div class="grid grid-cols-5 py-3">
+            <div class="text-center text-gray-500">
+                <i class="fa fa-home text-xl block"></i>
+                <div class="text-xs mt-1">首页</div>
+            </div>
+            <div class="text-center text-gray-500">
+                <i class="fa fa-folder-o text-xl block"></i>
+                <div class="text-xs mt-1">资料库</div>
+            </div>
+            <div class="text-center text-amber-500">
+                <i class="fa fa-crown text-xl block"></i>
+                <div class="text-xs mt-1">VIP</div>
+            </div>
+            <div class="text-center text-gray-500">
+                <i class="fa fa-comment-o text-xl block"></i>
+                <div class="text-xs mt-1">推荐</div>
+            </div>
+            <div class="text-center text-gray-500 relative">
+                <span class="absolute top-0 right-4 w-2 h-2 bg-redBadge rounded-full"></span>
+                <i class="fa fa-user-o text-xl block"></i>
+                <div class="text-xs mt-1">我</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

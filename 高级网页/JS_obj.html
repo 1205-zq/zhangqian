@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS内部对象</title>
+</head>
+<body>
+    
+    <script>
+        //math对象
+        console.log(Math.floor(8.7)); //向下取整
+        console.log(Math.round(8.7)); //四舍五入
+        console.log(Math.random()); //随机数[0,1)
+        // 获取从min到max的随机数
+        function getRandomNum(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        console.log(getRandomNum(100, 900)); // 获取100到900的随机数
+// date对象
+        var date = new Date();
+        console.log(date.getFullYear()); //获取年份
+        console.log(date.getMonth() + 1); //获取月份，注意月份是从0开始的，所以要加1
+        console.log(date.getDate()); //获取日期
+        console.log(date.getDay()); //获取星期几，0是星期天，1是星期一，以此类推
+        console.log(date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()); 
+        console.log(date.getMinutes()); //获取分钟
+        console.log(date.getSeconds()); //获取秒数
+        console.log(date.getTime()); //获取时间戳,从1970年1月1日0时0分0秒开始毫秒数
+
+        //数组对象
+
+        var arr = [1, 2, 3, 4, 'five', 'six', 'seven'];
+        var arr1 = new Array(1, 2, 3, 4, 'five', 'six', 'seven');
+        console.log(arr);
+        console.log(arr1);
+        console.log(new Array(5)); //创建一个长度为5的数组，数组元素为undefined
+        var arr2 = Array.of(5);//创建一个长度为1的数组，数组元素为5
+        console.log(arr2); 
+    </script>
+</body>
+</html>
