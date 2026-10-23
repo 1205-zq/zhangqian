@@ -1,11 +1,11 @@
 ---
 name: git-push-gitee
-description: Commit the current project and push to the configured Gitee repository. Use when the user says submit project, 提交项目, push to gitee, 推送到 gitee, git commit, or 提交到 gitee. Requires GITEE_TOKEN and GITEE_USER environment variables to be set in the shell session before executing. Do not use for GitHub or GitLab repos.
+description: Commit the current project and push to a configured Gitee repository. Use when the user says submit project, 提交项目, push to gitee, 推送到 gitee, git commit, or 提交到 gitee. Requires GITEE_TOKEN and GITEE_REPO owner slash repo env vars to be set in the shell session before executing. Do not use for GitHub or GitLab repos.
 ---
 
 # Git Push → Gitee
 
-将当前工作目录的改动 commit 并 push 到 Gitee 仓库 `https://gitee.com/neusoft_wangyao_jsj/xyz1.git`。
+将当前工作目录的改动 commit 并 push 到 Gitee 仓库（仓库地址通过 `GITEE_REPO` 环境变量传入，格式 `owner/repo`）。
 
 ## 前置条件
 
@@ -13,7 +13,7 @@ description: Commit the current project and push to the configured Gitee reposit
 
 ```powershell
 $env:GITEE_TOKEN = "<your gitee 私人令牌>"
-$env:GITEE_USER  = "neusoft_wangyao_jsj"
+$env:GITEE_REPO  = "neusoft_wangyao_jsj/xyz1"   # owner/repo 格式
 ```
 
 **绝对禁止**将 token 硬编码进 SKILL.md、写入 `git remote set-url`、或在日志里明文回显。
@@ -28,7 +28,7 @@ $env:GITEE_USER  = "neusoft_wangyao_jsj"
 ```powershell
 git --version 2>&1
 if (-not $env:GITEE_TOKEN) { Write-Error "GITEE_TOKEN 未设置，停止"; return }
-if (-not $env:GITEE_USER)  { Write-Error "GITEE_USER 未设置，停止"; return }
+if (-not $env:GITEE_REPO)  { Write-Error "GITEE_REPO 未设置，停止"; return }
 ```
 
 ### 2. 确保是 git 仓库
@@ -54,9 +54,31 @@ git commit -m "<commit-message>"
 
 ### 4. 设置远程 origin（使用带凭据的 URL，用完即还原）
 
+#### 关键：用户名必须是 **令牌所属账号的 login**
+
+Gitee 的 token 可能由仓库的**成员 / collaborator / 企业子账号**生成，
+其 login（API 里返回的 `user.login`）可能既不是仓库 owner 也不是组织名。
+直接猜 owner 当用户名会报 `The token username invalid` 403。
+
+**必须先查一次**，再拼 URL：
+
 ```powershell
-git remote remove origin 2>$null; git remote add origin "https://$env:GITEE_USER`:$env:GITEE_TOKEN`@gitee.com/neusoft_wangyao_jsj/xyz1.git"
+# 4a. 用 API 查出 token 所属账号的 login（只在 token 已设置时执行）
+# 注意：Gitee 某些环境下 access_token=<token> query 参数会被返回 401，
+# 必须用 PRIVATE-TOKEN header 才能稳定通过认证
+$headers = @{ "PRIVATE-TOKEN" = $env:GITEE_TOKEN }
+$resp = Invoke-RestMethod -Uri "https://gitee.com/api/v5/user" -Headers $headers
+$zq_tokenLogin = $resp.login
+Write-Output "token 所属账号 login = $zq_tokenLogin"
+
+# 4b. 用查到的 login 当 URL 用户名部分
+$authUrl = "https://$zq_tokenLogin`:$env:GITEE_TOKEN`@gitee.com/$env:GITEE_REPO.git"
+
+# 4c. 设置 remote
+git remote remove origin 2>$null; git remote add origin $authUrl
 ```
+
+**禁止**硬拼 `https://<仓库owner>:<token>@gitee.com/...`，除非已知 token 确实由 owner 本人生成。
 
 ### 5. 推送
 
@@ -80,7 +102,7 @@ rebase 过程如果出现冲突，停下来告知用户手动解决，不要自�
 ### 6. 收尾：清除远程 URL 里的凭据（防止 .git/config 泄漏 token）
 
 ```powershell
-git remote set-url origin "https://gitee.com/neusoft_wangyao_jsj/xyz1.git"
+git remote set-url origin "https://gitee.com/$env:GITEE_REPO.git"
 git remote -v
 ```
 
@@ -89,7 +111,8 @@ git remote -v
 | 错误 | 可能原因 | 处理 |
 |---|---|---|
 | `401 Unauthorized` | token 过期 / scope 不够 | 让用户撤销旧令牌、重新生成（scope: `projects` 或 `repo`），再执行步骤 4 |
-| `404 Repository not found` | 仓库路径错 / 令牌账号无权限 | 确认 URL `https://gitee.com/neusoft_wangyao_jsj/xyz1.git` 是否存在，令牌账号是否为该仓库成员 |
+| `The token username invalid` 403 | URL 里用户名错 | 重新执行步骤 4a，用 API 查出 token 真实所属账号 login，**不要**猜 owner/用户名 |
+| `404 Repository not found` | 仓库路径错 / 令牌账号无权限 | 确认 `$env:GITEE_REPO`（owner/repo）是否正确；令牌所属账号必须是该仓库的成员 |
 | `rejected ... fetch first` | 远程已有提交 | 执行 `git pull --rebase origin main` 后再 push |
 | `not a git repository` | cwd 错 | 确认当前目录是目标项目根目录；不要重新 `git init` 制造新 root commit |
 | 远程 URL 里还能看到 token | 忘记执行步骤 6 | 立即执行步骤 6，然后到 Gitee 后台撤销旧令牌 |
