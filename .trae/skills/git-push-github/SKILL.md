@@ -50,6 +50,17 @@ Host github.com
     HostName ssh.github.com
     Port 443
     User git
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+**Windows 注意**：该文件必须是 **UTF-8 无 BOM**。用 PowerShell 的 `Add-Content` / `Out-File` 默认会写入 BOM，
+ssh 会报 `no argument after keyword "﻿"` 并拒绝所有连接。写入方式：
+
+```powershell
+$cfg = "$env:USERPROFILE\.ssh\config"
+$raw = [System.IO.File]::ReadAllText($cfg)
+$clean = $raw.TrimStart([char]0xFEFF)
+[System.IO.File]::WriteAllText($cfg, $clean, (New-Object System.Text.UTF8Encoding($false)))
 ```
 
 这样 `git@github.com:...` 形式的地址会自动走 443，无需每次带 `-p`。
@@ -105,6 +116,7 @@ git push -u github main
 | `Repository not found` | 仓库名错或无权限 | 核对 `$env:GITHUB_REPO`；确认当前密钥所属账号（`1205-zq`）对该仓库有写权限 |
 | `rejected ... fetch first` | 远程已有提交（如 README） | `git pull --rebase origin main` 后再 push |
 | `Host key verification failed` | 首次连接未记录主机指纹 | 用 `-o StrictHostKeyChecking=accept-new` 重连一次 |
+| `no argument after keyword "﻿"` / `bad configuration options` | ssh config 带 UTF-8 BOM | 按步骤 2 用 `UTF8Encoding($false)` 重写为无 BOM |
 | `not a git repository` | cwd 错误 | 确认在项目根目录；不要重复 `git init` |
 
 ## 安全红线
