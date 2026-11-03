@@ -6,6 +6,7 @@
     <title>VIP页面</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../iconfont.css">
     <script>
         tailwind.config = {
             theme: {
@@ -36,10 +37,20 @@
     <!-- 顶部黄色头部 -->
     <div class="bg-vipBg px-5 pt-8 pb-4">
         <!-- 顶部Tab -->
-        <div class="flex gap-8 mb-6">
-            <span class="text-white text-xl font-bold border-b-2 border-white pb-1">VIP</span>
-            <span class="text-white/80 text-xl">听学</span>
-            <span class="text-white/80 text-xl">志愿</span>
+        <div class="flex gap-8 mb-6 justify-between items-center">
+            <div class="flex gap-8">
+                <span class="text-white text-xl font-bold border-b-2 border-white pb-1">VIP</span>
+                <span class="text-white/80 text-xl">听学</span>
+                <span class="text-white/80 text-xl">志愿</span>
+            </div>
+            <div class="flex gap-5 items-center text-xl text-white">
+                <a href="24002120504张乾2.html" class="block" title="资料检索"><i class="iconfont icon-biaodan"></i></a>
+                <a href="24002120504张乾3.html" class="relative block" title="消息">
+                    <i class="iconfont icon-xiaoxi"></i>
+                    <span class="absolute -top-2 -right-2 bg-redBadge text-white text-xs px-1.5 rounded-full">32</span>
+                </a>
+                <a href="24002120504张乾5.html" class="block" title="历史记录"><i class="iconfont icon-shijian"></i></a>
+            </div>
         </div>
 
         <!-- VIP卡片 -->
@@ -181,27 +192,27 @@
     <!-- 底部Tab导航 -->
     <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white shadow-md">
         <div class="grid grid-cols-5 py-3">
-            <div class="text-center text-gray-500">
-                <i class="fa fa-home text-xl block"></i>
+            <a href="24002120504张乾1.html" class="text-center text-gray-500 block">
+                <i class="iconfont icon-a-235_zhuye text-xl block"></i>
                 <div class="text-xs mt-1">首页</div>
-            </div>
-            <div class="text-center text-gray-500">
-                <i class="fa fa-folder-o text-xl block"></i>
+            </a>
+            <a href="24002120504张乾2.html" class="text-center text-gray-500 block">
+                <i class="iconfont icon-biaoqian text-xl block"></i>
                 <div class="text-xs mt-1">资料库</div>
-            </div>
-            <div class="text-center text-amber-500">
-                <i class="fa fa-crown text-xl block"></i>
+            </a>
+            <a href="24002120504张乾3.html" class="text-center text-amber-500 block">
+                <i class="iconfont icon-a-235_huiyuan text-xl block"></i>
                 <div class="text-xs mt-1">VIP</div>
-            </div>
-            <div class="text-center text-gray-500">
-                <i class="fa fa-comment-o text-xl block"></i>
+            </a>
+            <a href="24002120504张乾4.html" class="text-center text-gray-500 block">
+                <i class="iconfont icon-gougou text-xl block"></i>
                 <div class="text-xs mt-1">推荐</div>
-            </div>
-            <div class="text-center text-gray-500 relative">
+            </a>
+            <a href="24002120504张乾5.html" class="text-center text-gray-500 relative block">
                 <span class="absolute top-0 right-4 w-2 h-2 bg-redBadge rounded-full"></span>
-                <i class="fa fa-user-o text-xl block"></i>
+                <i class="iconfont icon-user text-xl block"></i>
                 <div class="text-xs mt-1">我</div>
-            </div>
+            </a>
         </div>
     </div>
 </body>
