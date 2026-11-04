@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      作者：张乾
+      建立时间：2026-11-04 13:42
+      使用大模型：DeepSeek-V4.1-Flash
+      功能名称：新闻分类选项卡（可复用 Tab 组件演示）
+    -->
+    <title>新闻分类 · 选项卡</title>
+    <style>
+      :root {
+        --zq_brand: #c8102e;
+        --zq_ink: #1b1b1f;
+        --zq_muted: #6b6b76;
+        --zq_line: #e3e3e8;
+        --zq_bg: #f7f7f9;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--zq_ink);
+        font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        background: var(--zq_bg);
+        line-height: 1.7;
+      }
+
+      .zq_header {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 22px 20px 18px;
+        color: #fff;
+        background: linear-gradient(135deg, #c8102e, #7c1020);
+      }
+
+      .zq_homeLink {
+        align-self: flex-start;
+        padding: 4px 12px;
+        color: #fff;
+        font-size: 13px;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        transition: 0.2s ease;
+      }
+
+      .zq_homeLink:hover,
+      .zq_homeLink:focus-visible {
+        background: rgba(255, 255, 255, 0.18);
+        outline: none;
+      }
+
+      .zq_title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      .zq_main {
+        width: min(760px, calc(100% - 32px));
+        margin: 22px auto 40px;
+      }
+
+      .zq_tabs {
+        overflow: hidden;
+        border: 1px solid var(--zq_line);
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(27, 27, 31, 0.08);
+      }
+
+      .zq_tabList {
+        display: flex;
+        overflow-x: auto;
+        border-bottom: 1px solid var(--zq_line);
+        background: #fbfbfc;
+      }
+
+      .zq_tab {
+        position: relative;
+        flex: 1 0 auto;
+        padding: 14px 18px;
+        color: var(--zq_muted);
+        font-size: 15px;
+        font-family: inherit;
+        white-space: nowrap;
+        cursor: pointer;
+        background: transparent;
+        border: 0;
+        transition: color 0.2s ease, background 0.2s ease;
+      }
+
+      .zq_tab::after {
+        position: absolute;
+        right: 18px;
+        bottom: 0;
+        left: 18px;
+        height: 3px;
+        content: "";
+        background: var(--zq_brand);
+        border-radius: 3px 3px 0 0;
+        transform: scaleX(0);
+        transition: transform 0.22s ease;
+      }
+
+      .zq_tab:hover {
+        color: var(--zq_ink);
+        background: #f3f3f6;
+      }
+
+      .zq_tab:focus-visible {
+        outline: 2px solid var(--zq_brand);
+        outline-offset: -3px;
+      }
+
+      .zq_tab.zq_tab--active {
+        color: var(--zq_brand);
+        font-weight: 700;
+        background: #fff;
+      }
+
+      .zq_tab.zq_tab--active::after {
+        transform: scaleX(1);
+      }
+
+      .zq_panelList {
+        padding: 6px 0 10px;
+      }
+
+      .zq_panel {
+        display: none;
+        padding: 6px 22px 14px;
+        animation: zq_fade 0.24s ease;
+      }
+
+      .zq_panel.zq_panel--active {
+        display: block;
+      }
+
+      @keyframes zq_fade {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .zq_panelTitle {
+        margin: 12px 0 6px;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .zq_newsItem {
+        display: block;
+        padding: 14px 0;
+        color: var(--zq_ink);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--zq_line);
+      }
+
+      .zq_newsItem:last-child {
+        border-bottom: 0;
+      }
+
+      .zq_newsItem:hover .zq_newsTitle {
+        color: var(--zq_brand);
+      }
+
+      .zq_newsTitle {
+        display: block;
+        font-size: 15px;
+        transition: color 0.2s ease;
+      }
+
+      .zq_newsMeta {
+        margin-top: 4px;
+        color: var(--zq_muted);
+        font-size: 12px;
+      }
+
+      .zq_footer {
+        padding: 20px;
+        color: var(--zq_muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .zq_footer a {
+        color: var(--zq_brand);
+        text-decoration: none;
+      }
+
+      .zq_footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .zq_tab {
+          padding: 12px 14px;
+          font-size: 14px;
+        }
+
+        .zq_panel {
+          padding: 6px 16px 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="zq_header">
+      <a class="zq_homeLink" href="./index.html">← 返回首页</a>
+      <h1 class="zq_title">新闻分类</h1>
+    </header>
+
+    <main class="zq_main">
+      <section class="zq_tabs" id="zq_newsTabs">
+        <div class="zq_tabList" role="tablist" aria-label="新闻分类">
+          <button
+            class="zq_tab zq_tab--active"
+            type="button"
+            role="tab"
+            data-zq-tab="domestic"
+            aria-selected="true"
+          >
+            国内新闻
+          </button>
+          <button
+            class="zq_tab"
+            type="button"
+            role="tab"
+            data-zq-tab="provincial"
+            aria-selected="false"
+          >
+            省内新闻
+          </button>
+          <button
+            class="zq_tab"
+            type="button"
+            role="tab"
+            data-zq-tab="international"
+            aria-selected="false"
+          >
+            国际新闻
+          </button>
+          <button
+            class="zq_tab"
+            type="button"
+            role="tab"
+            data-zq-tab="hot"
+            aria-selected="false"
+          >
+            最热新闻
+          </button>
+        </div>
+
+        <div class="zq_panelList">
+          <div
+            class="zq_panel zq_panel--active"
+            role="tabpanel"
+            data-zq-panel="domestic"
+          >
+            <h2 class="zq_panelTitle">国内新闻</h2>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">全国多地推进城市更新，老旧小区改造提速</span>
+              <span class="zq_newsMeta">2026-11-04 · 时政</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">新版医保药品目录落地，多款创新药纳入报销</span>
+              <span class="zq_newsMeta">2026-11-03 · 民生</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">秋收进度过半，粮食主产区机械化作业效率提升</span>
+              <span class="zq_newsMeta">2026-11-02 · 三农</span>
+            </a>
+          </div>
+
+          <div class="zq_panel" role="tabpanel" data-zq-panel="provincial">
+            <h2 class="zq_panelTitle">省内新闻</h2>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">省域高铁环线全线贯通，通勤时间大幅压缩</span>
+              <span class="zq_newsMeta">2026-11-04 · 交通</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">省级数字政务平台上线，百余项业务实现一网通办</span>
+              <span class="zq_newsMeta">2026-11-03 · 政务</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">省内高校新增人工智能相关专业，面向产业需求招生</span>
+              <span class="zq_newsMeta">2026-11-01 · 教育</span>
+            </a>
+          </div>
+
+          <div class="zq_panel" role="tabpanel" data-zq-panel="international">
+            <h2 class="zq_panelTitle">国际新闻</h2>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">多国气候会议就减排时间表展开新一轮磋商</span>
+              <span class="zq_newsMeta">2026-11-04 · 国际</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">全球供应链重构加速，区域贸易协定持续扩容</span>
+              <span class="zq_newsMeta">2026-11-03 · 经济</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">深空探测任务发布首批科学数据，引发学界关注</span>
+              <span class="zq_newsMeta">2026-11-02 · 科技</span>
+            </a>
+          </div>
+
+          <div class="zq_panel" role="tabpanel" data-zq-panel="hot">
+            <h2 class="zq_panelTitle">最热新闻</h2>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">寒潮蓝色预警发布，多地气温创入秋以来新低</span>
+              <span class="zq_newsMeta">热度 98.6 万 · 天气</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">新能源汽车下乡活动启动，多款车型推出补贴</span>
+              <span class="zq_newsMeta">热度 76.2 万 · 汽车</span>
+            </a>
+            <a class="zq_newsItem" href="#">
+              <span class="zq_newsTitle">国乒新阵容亮相，年轻选手首秀表现抢眼</span>
+              <span class="zq_newsMeta">热度 65.4 万 · 体育</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="zq_footer">
+      <a href="./index.html">← 返回首页</a> · 张乾 · 高级网页设计课堂实践
+    </footer>
+
+    <script src="./js/zq_tabs.js"></script>
+  </body>
+</html>

@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--
+      作者：张乾
+      建立时间：2026-11-04 14:05
+      使用大模型：DeepSeek-V4.1-Flash
+      功能名称：新闻点击排行榜（点击排行 / 评论排行 选项卡，一比一还原）
+    -->
+    <title>新闻点击排行榜</title>
+    <style>
+      /* 作者：张乾 —— 全局基础样式 */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 10px 0 24px;
+        background: #f5f5f5;
+        color: #333;
+        font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .zq_page {
+        width: 512px;
+        max-width: calc(100% - 16px);
+        margin: 0 auto;
+      }
+
+      /* 作者：张乾 —— 排行榜白色卡片（浅棕描边 + 圆角） */
+      .zq_card {
+        padding: 18px 18px 6px;
+        background: #fff;
+        border: 2px solid #e8cfa8;
+        border-radius: 10px;
+      }
+
+      /* 作者：张乾 —— 顶部选项卡（两个等宽按钮） */
+      .zq_tabBar {
+        display: flex;
+        margin: 0 46px 6px;
+      }
+
+      .zq_tabBtn {
+        flex: 1 1 50%;
+        padding: 9px 0 10px;
+        color: #333;
+        font-size: 17px;
+        font-family: inherit;
+        letter-spacing: 1px;
+        cursor: pointer;
+        background: #dce6f3;
+        border: 1px solid #c3d4e8;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .zq_tabBtn:hover {
+        background: #cfdcee;
+      }
+
+      .zq_tabBtn:focus-visible {
+        outline: 2px solid #7aa7dd;
+        outline-offset: -2px;
+      }
+
+      .zq_tabBtn.zq_tabBtn--active {
+        background: #fff;
+        border: 1px solid #9dc0e4;
+        color: #111;
+        font-weight: 700;
+      }
+
+      /* 作者：张乾 —— 排行榜列表容器 */
+      .zq_list {
+        display: none;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .zq_list.zq_list--active {
+        display: block;
+      }
+
+      /* 作者：张乾 —— 单条排行榜数据行 */
+      .zq_row {
+        display: flex;
+        align-items: center;
+        padding: 12px 0 13px;
+        border-bottom: 1px dotted #cfcfcf;
+      }
+
+      .zq_row:last-child {
+        border-bottom: 0;
+      }
+
+      .zq_rank {
+        flex: 0 0 38px;
+        color: #93a3b3;
+        font-size: 15px;
+        text-align: left;
+      }
+
+      .zq_title {
+        flex: 1 1 auto;
+        min-width: 0;
+        color: #2f2f2f;
+        font-size: 16px;
+        line-height: 1.5;
+        text-align: left;
+      }
+
+      .zq_title:hover {
+        color: #c8102e;
+        cursor: pointer;
+      }
+
+      .zq_count {
+        flex: 0 0 72px;
+        color: #e60012;
+        font-size: 15px;
+        text-align: right;
+        font-family: Arial, "Microsoft YaHei", sans-serif;
+      }
+
+      /* 作者：张乾 —— 页脚返回课程首页入口 */
+      .zq_footer {
+        margin-top: 12px;
+        color: #8a8a8a;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .zq_footer a {
+        color: #8a8a8a;
+        text-decoration: none;
+      }
+
+      .zq_footer a:hover {
+        color: #c8102e;
+        text-decoration: underline;
+      }
+
+      /* 作者：张乾 —— 窄屏适配，保持卡片不横向溢出 */
+      @media (max-width: 520px) {
+        .zq_card {
+          padding: 14px 10px 4px;
+        }
+
+        .zq_tabBar {
+          margin: 0 6px 6px;
+        }
+
+        .zq_tabBtn {
+          font-size: 15px;
+        }
+
+        .zq_title {
+          font-size: 14px;
+        }
+
+        .zq_count {
+          flex: 0 0 64px;
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="zq_page">
+      <section class="zq_card" id="zq_rankCard">
+        <div class="zq_tabBar" role="tablist" aria-label="排行榜分类">
+          <button
+            class="zq_tabBtn zq_tabBtn--active"
+            type="button"
+            role="tab"
+            data-zq-tab="click"
+            aria-selected="true"
+          >
+            点击排行
+          </button>
+          <button
+            class="zq_tabBtn"
+            type="button"
+            role="tab"
+            data-zq-tab="comment"
+            aria-selected="false"
+          >
+            评论排行
+          </button>
+        </div>
+
+        <!-- 点击排行（默认显示） -->
+        <ul class="zq_list zq_list--active" data-zq-list="click" role="tabpanel">
+          <li class="zq_row">
+            <span class="zq_rank">1</span>
+            <span class="zq_title">中国各城市房子还要卖多少年(详细数据)</span>
+            <span class="zq_count">187706</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">2</span>
+            <span class="zq_title">任志强：60多年来 我不知道国企给了我们</span>
+            <span class="zq_count">171180</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">3</span>
+            <span class="zq_title">三精制药跳楼老总被查因华润商贿案 省食</span>
+            <span class="zq_count">127631</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">4</span>
+            <span class="zq_title">内地17省铺开不动产统一登记职责整合工作</span>
+            <span class="zq_count">113865</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">5</span>
+            <span class="zq_title">山西煤老板抛售整栋99套二手房 8年投资翻</span>
+            <span class="zq_count">72770</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">6</span>
+            <span class="zq_title">北京城南楼市“沦陷”变相降价措施加码</span>
+            <span class="zq_count">62971</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">7</span>
+            <span class="zq_title">中国3D打印技术取得重大突破 近1200人连</span>
+            <span class="zq_count">27456</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">8</span>
+            <span class="zq_title">重磅利空突至致全球暴跌 A股或黑周五无悬</span>
+            <span class="zq_count">25322</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">9</span>
+            <span class="zq_title">七匹狼早盘上演奇葩一幕：单笔4手卖单刷</span>
+            <span class="zq_count">20912</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">10</span>
+            <span class="zq_title">长油小股东主导股东大会 当场爆料董事长</span>
+            <span class="zq_count">11667</span>
+          </li>
+        </ul>
+
+        <!-- 评论排行（点击选项卡后显示） -->
+        <ul class="zq_list" data-zq-list="comment" role="tabpanel">
+          <li class="zq_row">
+            <span class="zq_rank">1</span>
+            <span class="zq_title">中国各城市房子还要卖多少年(详细数据)</span>
+            <span class="zq_count">9876</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">2</span>
+            <span class="zq_title">任志强：60多年来 我不知道国企给了我们</span>
+            <span class="zq_count">8654</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">3</span>
+            <span class="zq_title">三精制药跳楼老总被查因华润商贿案 省食</span>
+            <span class="zq_count">7421</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">4</span>
+            <span class="zq_title">内地17省铺开不动产统一登记职责整合工作</span>
+            <span class="zq_count">6033</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">5</span>
+            <span class="zq_title">山西煤老板抛售整栋99套二手房 8年投资翻</span>
+            <span class="zq_count">5120</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">6</span>
+            <span class="zq_title">北京城南楼市“沦陷”变相降价措施加码</span>
+            <span class="zq_count">4318</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">7</span>
+            <span class="zq_title">中国3D打印技术取得重大突破 近1200人连</span>
+            <span class="zq_count">3576</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">8</span>
+            <span class="zq_title">重磅利空突至致全球暴跌 A股或黑周五无悬</span>
+            <span class="zq_count">2894</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">9</span>
+            <span class="zq_title">七匹狼早盘上演奇葩一幕：单笔4手卖单刷</span>
+            <span class="zq_count">2107</span>
+          </li>
+          <li class="zq_row">
+            <span class="zq_rank">10</span>
+            <span class="zq_title">长油小股东主导股东大会 当场爆料董事长</span>
+            <span class="zq_count">1642</span>
+          </li>
+        </ul>
+      </section>
+
+      <footer class="zq_footer">
+        <a href="../高级网页/index.html">← 返回课程首页 index.html</a>
+      </footer>
+    </div>
+
+    <script src="./js/zq_rank.js"></script>
+  </body>
+</html>
