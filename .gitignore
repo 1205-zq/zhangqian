@@ -16,6 +16,7 @@ _*.ps1
 # 本地产物
 dist/
 build/
+.trae-html-share-packages/
 *.log
 *.tmp
 
