@@ -1,0 +1,44 @@
+{
+  "id": "5231896",
+  "name": "111",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "48493357",
+      "name": "图书-copy",
+      "font_class": "tushu-copy",
+      "unicode": "e6e4",
+      "unicode_decimal": 59108
+    },
+    {
+      "icon_id": "1090",
+      "name": "图书",
+      "font_class": "tushu",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "785061",
+      "name": "主页",
+      "font_class": "zhuye",
+      "unicode": "e678",
+      "unicode_decimal": 59000
+    },
+    {
+      "icon_id": "1517749",
+      "name": "购物车",
+      "font_class": "gouwuche",
+      "unicode": "e656",
+      "unicode_decimal": 58966
+    },
+    {
+      "icon_id": "16322526",
+      "name": "我的",
+      "font_class": "wode_2",
+      "unicode": "e6e3",
+      "unicode_decimal": 59107
+    }
+  ]
+}

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>ICONFONT-04 · 移动端固定底栏（SVG）</title>
+    <!-- 本地 iconfont SVG sprite 注入器（把 <symbol> 注入到 body 供 <use> 引用） -->
+    <script src="./font/iconfont.js"></script>
+    <style>
+      /* ========== 设计令牌（与 iconfont-3 同色系，保持兄妹一致性） ========== */
+      :root {
+        --zq_safeBot: env(safe-area-inset-bottom, 0px);
+        --zq_cBg: #2b2e2a; /* 深炭底 */
+        --zq_cCard: #373a35;
+        --zq_cNavBg: #f8f4ee; /* 米白底栏 */
+        --zq_cNavInk: #8a857b;
+        --zq_cNavOn: #b5533c; /* 赤陶红选中 */
+        --zq_cBadge: #d1342f; /* 徽章红 */
+        --zq_cText: #f3efe6;
+        --zq_navH: 64px;
+        --zq_badgeSize: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--zq_cBg);
+        font-family: "Inter", "Segoe UI", "Microsoft YaHei", sans-serif;
+        color: var(--zq_cText);
+      }
+
+      /* 移动端外壳 */
+      .zq_mobile {
+        max-width: 420px;
+        margin: 0 auto;
+        min-height: 100vh;
+        position: relative;
+        background: var(--zq_cBg);
+        padding-bottom: calc(var(--zq_navH) + var(--zq_safeBot));
+      }
+
+      .zq_homeLink {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 50;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #9a9f96;
+        text-decoration: none;
+      }
+
+      /* 顶部内容 */
+      .zq_pageHeader {
+        padding: 64px 24px 24px;
+      }
+      .zq_pageTitle {
+        font-family: "Noto Serif SC", Georgia, serif;
+        font-size: 34px;
+        font-weight: 700;
+        margin: 0;
+      }
+      .zq_pageSub {
+        font-size: 13px;
+        color: #8f958e;
+        margin-top: 8px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .zq_pageBody {
+        padding: 0 20px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .zq_card {
+        height: 110px;
+        border-radius: 14px;
+        background: var(--zq_cCard);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #5b5e59;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      /* ========== SVG 图标 ========== */
+      .zq_svgIcon {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+      }
+      /* 覆盖 iconfont.js sprite 里的硬编码 fill（#333333 / #13227a 等），
+         让图标统一继承父元素的 color（currentColor） */
+      .zq_svgIcon path,
+      .zq_svgIcon rect,
+      .zq_svgIcon circle,
+      .zq_svgIcon polygon,
+      .zq_svgIcon polyline {
+        fill: currentColor !important;
+      }
+
+      /* ========== 移动端固定底栏 ========== */
+      .zq_tabs {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        max-width: 420px;
+        margin: 0 auto;
+        background: var(--zq_cNavBg);
+        padding-bottom: var(--zq_safeBot);
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.25);
+      }
+      .zq_tabsInner {
+        display: flex;
+        height: var(--zq_navH);
+        align-items: stretch;
+        justify-content: space-around;
+        padding: 0 6px;
+      }
+
+      .zq_tab {
+        flex: 1;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        cursor: pointer;
+        color: var(--zq_cNavInk);
+        text-decoration: none;
+        user-select: none;
+        transition: color 0.18s ease;
+      }
+      .zq_tab:focus {
+        outline: none;
+      }
+
+      /* 图标容器（徽章/红点绝对定位在这里） */
+      .zq_tabIcon {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 36px;
+      }
+
+      .zq_tabLabel {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        transition: font-weight 0.18s ease;
+        color: inherit;
+      }
+
+      /* 选中态 */
+      .zq_tab--on {
+        color: var(--zq_cNavOn);
+      }
+      .zq_tab--on .zq_tabLabel {
+        font-weight: 700;
+      }
+      .zq_tab--on .zq_tabIcon {
+        transform: translateY(-2px);
+      }
+
+      /* 选中态时 SVG 图标强制填充选中色 */
+      .zq_tab--on .zq_svgIcon path,
+      .zq_tab--on .zq_svgIcon rect,
+      .zq_tab--on .zq_svgIcon circle,
+      .zq_tab--on .zq_svgIcon polyline,
+      .zq_tab--on .zq_svgIcon polygon {
+        fill: var(--zq_cNavOn) !important;
+      }
+
+      /* === 数字徽章 === */
+      .zq_badge {
+        position: absolute;
+        top: -2px;
+        right: -10px;
+        min-width: var(--zq_badgeSize);
+        height: var(--zq_badgeSize);
+        padding: 0 5px;
+        border-radius: calc(var(--zq_badgeSize) / 2);
+        background: var(--zq_cBadge);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: var(--zq_badgeSize);
+        text-align: center;
+        box-shadow: 0 1px 4px rgba(209, 52, 47, 0.55);
+        transform: scale(0.9);
+        animation: zq_badgePop 0.4s ease forwards;
+      }
+      @keyframes zq_badgePop {
+        0% { transform: scale(0); }
+        70% { transform: scale(1.12); }
+        100% { transform: scale(0.9); }
+      }
+
+      /* === 红点 === */
+      .zq_dot {
+        position: absolute;
+        top: 4px;
+        right: 2px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--zq_cBadge);
+        box-shadow: 0 0 0 2px var(--zq_cNavBg);
+        animation: zq_dotPulse 2.2s ease-in-out infinite;
+      }
+      @keyframes zq_dotPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.85); }
+      }
+
+      /* 桌面预览时让外壳像手机 */
+      @media (min-width: 560px) {
+        body {
+          background: #1a1c1a;
+        }
+        .zq_mobile {
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                      0 0 0 1px rgba(255, 255, 255, 0.05);
+          border-radius: 24px;
+          overflow: hidden;
+          margin: 24px auto;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="zq_mobile">
+      <!-- 返回首页 -->
+      <a href="./index.html" class="zq_homeLink">← INDEX</a>
+
+      <!-- 模拟内容 -->
+      <header class="zq_pageHeader">
+        <div class="zq_pageSub">ICONFONT · 04 / SVG · INLINE</div>
+        <h1 class="zq_pageTitle">底栏 · SVG</h1>
+      </header>
+      <main class="zq_pageBody">
+        <div class="zq_card">CONTENT · 01</div>
+        <div class="zq_card">CONTENT · 02</div>
+        <div class="zq_card">CONTENT · 03</div>
+        <div class="zq_card">CONTENT · 04</div>
+        <div class="zq_card">CONTENT · 05</div>
+      </main>
+
+      <!-- 固定底部导航 -->
+      <nav class="zq_tabs" role="tablist" aria-label="底部导航">
+        <div class="zq_tabsInner">
+          <!-- ① 主页（默认选中） -->
+          <a class="zq_tab zq_tab--on" data-zq_tab="home" aria-current="page" href="#home">
+            <span class="zq_tabIcon">
+              <svg class="zq_svgIcon" aria-hidden="true"><use href="#icon-zhuye" /></svg>
+            </span>
+            <span class="zq_tabLabel">主页</span>
+          </a>
+
+          <!-- ② 图书（右上角红点） -->
+          <a class="zq_tab" data-zq_tab="library" href="#library">
+            <span class="zq_tabIcon">
+              <svg class="zq_svgIcon" aria-hidden="true"><use href="#icon-tushu" /></svg>
+              <span class="zq_dot" aria-label="有新内容"></span>
+            </span>
+            <span class="zq_tabLabel">图书</span>
+          </a>
+
+          <!-- ③ 购物车（右上角数字徽章） -->
+          <a class="zq_tab" data-zq_tab="cart" href="#cart">
+            <span class="zq_tabIcon">
+              <svg class="zq_svgIcon" aria-hidden="true"><use href="#icon-gouwuche" /></svg>
+              <span class="zq_badge" aria-label="3 件待处理">3</span>
+            </span>
+            <span class="zq_tabLabel">购物车</span>
+          </a>
+
+          <!-- ④ 我的 -->
+          <a class="zq_tab" data-zq_tab="me" href="#me">
+            <span class="zq_tabIcon">
+              <svg class="zq_svgIcon" aria-hidden="true"><use href="#icon-wode_2" /></svg>
+            </span>
+            <span class="zq_tabLabel">我的</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <script>
+      var zq_tabs = document.querySelectorAll(".zq_tab");
+      zq_tabs.forEach(function (tab) {
+        tab.addEventListener("click", function (e) {
+          e.preventDefault();
+          zq_tabs.forEach(function (t) {
+            t.classList.remove("zq_tab--on");
+            t.removeAttribute("aria-current");
+          });
+          tab.classList.add("zq_tab--on");
+          tab.setAttribute("aria-current", "page");
+        });
+      });
+    </script>
+  </body>
+</html>
