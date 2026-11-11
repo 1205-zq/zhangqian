@@ -98,6 +98,25 @@ git push -u github main
 使用独立的远程名 `github`（而不是 `origin`），这样不会覆盖已有的 Gitee `origin`，两个远端可以共存。
 remote URL 是 SSH 形式，本身不含任何凭据，无需还原步骤。
 
+#### 若 ssh config 已把 github.com 指向 ssh.github.com:443，而 443 连接被重置/超时
+
+本机 `~/.ssh/config` 可能被写成走 443（该文件可能无写权限，改不动）。此时不用改 config，
+直接把远程地址改成**端口 22 的完整 SSH URL**即可，git 会用 `-p 22` 覆盖 config 里的 Port：
+
+```powershell
+git remote set-url github "ssh://git@github.com:22/$env:GITHUB_REPO.git"
+git ls-remote github -h refs/heads/main   # 能返回 commit 即连通
+git push -u github main
+```
+
+首次连接如报 `Host key verification failed`，加一次性的宽松校验：
+
+```powershell
+$env:GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20"
+```
+
+该设置只影响当前会话，之后 `git push github main` 会正常使用已记录的 known_hosts。
+
 #### 非 fast-forward 处理
 
 ```powershell
@@ -112,6 +131,7 @@ git push -u github main
 | 错误 | 可能原因 | 处理 |
 |---|---|---|
 | `Connection refused` (port 22) | 22 端口被网络封锁 | 按步骤 2 改走 `ssh.github.com:443` |
+| `Connection reset / timed out` (port 443) | 443 出口被重置或超时（本机 config 指向 443 时常见） | 不改 config，按步骤 5 把远程改成 `ssh://git@github.com:22/<owner>/<repo>.git` |
 | `Permission denied (publickey)` | 公钥未添加到 GitHub / 用了错的密钥 | 让用户把 `id_ed25519.pub` 内容加到 GitHub → Settings → SSH keys |
 | `Repository not found` | 仓库名错或无权限 | 核对 `$env:GITHUB_REPO`；确认当前密钥所属账号（`1205-zq`）对该仓库有写权限 |
 | `rejected ... fetch first` | 远程已有提交（如 README） | `git pull --rebase origin main` 后再 push |
