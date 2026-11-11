@@ -80,6 +80,46 @@
   .wy-back a{display:inline-block;text-decoration:none;color:#0f2b5b;font-size:14.5px;font-weight:bold;background:#fff;border:1px solid #dbe4ff;border-radius:999px;padding:10px 26px;transition:transform .2s,box-shadow .2s}
   .wy-back a:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,43,91,.15)}
 
+  /* 任务二新增：creative 自学记录 */
+  .zq_study{margin-top:22px;padding:22px 24px;background:#f7fbff;border:1px solid #d7e6f8;border-radius:16px}
+  .zq_study h3{font-size:16.5px;color:#0f2b5b;margin-bottom:10px}
+  .zq_study_lead{font-size:13.5px;color:#3c5675;line-height:2}
+  .zq_study_lead a{color:#1d5bbf;font-weight:bold}
+  .zq_study code{background:#e8f1fd;color:#1d4ed8;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:12.5px}
+  .zq_study_row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  .zq_study_item{background:#fff;border:1px solid #e3ecf8;border-radius:12px;padding:14px 16px}
+  .zq_study_item h4{font-size:13.5px;color:#0f2b5b;margin-bottom:6px}
+  .zq_study_item p{font-size:13px;color:#41546e;line-height:2}
+  .zq_study_key{margin-top:14px;padding:12px 16px;background:#eef6ff;border-left:4px solid #1d5bbf;border-radius:0 10px 10px 0;font-size:13.5px;color:#24405f;line-height:2}
+  .zq_study_key b{color:#0f2b5b}
+  .zq_study_table{width:100%;border-collapse:collapse;font-size:12.8px;margin-top:16px;background:#fff}
+  .zq_study_table th,.zq_study_table td{border:1px solid #e3ecf8;padding:9px 12px;text-align:left}
+  .zq_study_table th{background:#eef4fc;color:#2b4a72;font-size:12.5px;letter-spacing:1px}
+  .zq_study_qa{margin-top:16px;font-size:13.2px;color:#3c5675;line-height:2}
+  .zq_study_qa p{margin-top:8px}
+  .zq_study_qa b{color:#0f2b5b}
+
+  /* 任务三新增：暖色主题 + 对话记录 */
+  .zq_study_sub{font-size:13.5px;color:#7c4a10;margin-top:18px}
+  .zq_task3{background:#fffaf2;border-color:#f0dfc0}
+  .zq_task3 h3{color:#7c4a10}
+  .zq_task3 .zq_study_lead{color:#6b543a}
+  .zq_task3 code{background:#fbeed8;color:#a1580a}
+  .zq_task3 .zq_study_item{background:#fffdf8;border-color:#f0e2c8}
+  .zq_task3 .zq_study_item h4{color:#7c4a10}
+  .zq_task3 .zq_study_item p{color:#5c4c38}
+  .zq_task3 .zq_study_key{background:#fdf3e3;border-left-color:#c9821f;color:#5c4326}
+  .zq_task3 .zq_study_key b{color:#7c4a10}
+  .zq_task3 .zq_study_qa{color:#6b543a}
+  .zq_task3 .zq_study_qa b{color:#7c4a10}
+  .zq_dlg{margin-top:6px}
+  .zq_tagline{font-size:11.5px;letter-spacing:2px;color:#a08b6a;margin-top:12px}
+  .zq_msg{padding:12px 16px;border-radius:12px;font-size:13px;line-height:2;margin-top:6px}
+  .zq_msg.zq_me{background:#fff;border:1px dashed #e3cfa8;color:#5c4326}
+  .zq_msg.zq_ai{background:#f7f9fc;border:1px dashed #cfd8e3;color:#33404e}
+  .zq_msg code{background:#f4ece0;color:#9a5a12;padding:1px 5px;border-radius:4px;font-family:Consolas,monospace;font-size:12.2px}
+  @media (max-width:720px){ .zq_study_row{grid-template-columns:1fr} .zq_study{padding:16px 14px} }
+
   footer{text-align:center;margin-top:34px;color:#9ca3af;font-size:13px;line-height:2}
 </style>
 </head>
@@ -194,9 +234,9 @@
   <div class="wy-sec">
     <div class="wy-sec-head">
       <span class="wy-no">4</span>
-      <h2>六种效果随心换<small>effect 参数 + 进阶：按钮实时切换</small></h2>
+      <h2>七种效果随心换<small>effect 参数 + 进阶：按钮实时切换（第 7 种 creative 为课下自学）</small></h2>
     </div>
-    <p class="wy-txt">改一个 <code>effect</code> 参数，轮播立刻换一种"性格"：slide / fade / cube / coverflow / flip / cards。上面的 6 个按钮已经绑好了点击事件（读取 <code>btn.dataset.fx</code>），JS 还需要你补两段。</p>
+    <p class="wy-txt">改一个 <code>effect</code> 参数，轮播立刻换一种"性格"：slide / fade / cube / coverflow / flip / cards，再加第 7 种课下自学的 <code>creative</code>。按钮已经绑好了点击事件（读取 <code>btn.dataset.fx</code>），JS 还需要你补两段。</p>
     <div class="wy-req">
       <h3>✍️ 任务 4 要求</h3>
       <p><b>基础分</b>：初始化 <code>#wySw4</code>，实现循环 + 自动播放（3.2 秒）+ 圆点分页器（#wyPag4），初始效果为 <code>'slide'</code>，动画时长 800 毫秒。</p>
@@ -210,7 +250,9 @@
       <button data-fx="coverflow">coverflow 画廊堆叠（沉浸）</button>
       <button data-fx="flip">flip 翻页（复古）</button>
       <button data-fx="cards">cards 卡片（俏皮）</button>
+      <button data-fx="creative">creative 电影墙（自学·第 7 种）</button>
     </div>
+
     <div class="wy-demo">
       <span class="wy-demo-tag">🎛️ 演示四 · 效果实验台（点按钮切换 effect）</span>
       <div class="wy-swiper">
@@ -221,9 +263,124 @@
             <div class="swiper-slide"><img src="swiper-imgs/c919_1.jpg" alt="C919大飞机"><div class="wy-cap"><h3>C919 大飞机</h3><p>企业官网爱用 fade</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号"><div class="wy-cap"><h3>奋斗者号</h3><p>游戏网站爱用 cube</p></div></div>
             <div class="swiper-slide"><img src="swiper-imgs/fast_1.jpg" alt="中国天眼"><div class="wy-cap"><h3>中国天眼 FAST</h3><p>相册页面爱用 coverflow</p></div></div>
+            <div class="swiper-slide"><img src="swiper-imgs/idamo.jpg" alt="爱达·魔都号"><div class="wy-cap"><h3>爱达·魔都号</h3><p>首艘国产大型邮轮 · 2024 年 1 月首航</p></div></div>
           </div>
           <div class="swiper-pagination" id="wyPag4"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- 任务二：creative 自学记录，直接接在六种 effect 之后 -->
+    <div class="zq_study">
+      <h3>任务二 · 自学第 7 种：creative 的 prev / next 各控制什么</h3>
+      <p class="zq_study_lead">
+        官方示例 <a href="swiper/demo/257-effect-creative.html" target="_blank">swiper/demo/257-effect-creative.html</a>
+        并排放了 6 组小样，每组只改 <code>creativeEffect</code> 的 <code>prev</code> / <code>next</code>，
+        出来的运镜完全不同——说明 creative 不是「一种动画」，而是把 transform 的起点和终点交给你写。
+      </p>
+
+      <div class="zq_study_row">
+        <div class="zq_study_item">
+          <h4>prev · 退场姿势</h4>
+          <p>管「已经看过、正在被推出焦点」的上一张。我给它写缩小到 0.72、向左退半张多（<code>translate:['-55%',0,-320]</code>），
+             再补一个 <code>rotate:[0,0,-8]</code> 的倾角，让它带着角度滑到侧后方，把舞台中心让出来。</p>
+        </div>
+        <div class="zq_study_item">
+          <h4>next · 登场姿势</h4>
+          <p>管「等在右边、准备进场」的下一张。它先在右侧停靠（<code>translate:['85%',0,-120]</code>）放大到 1.14 待命，
+             随滑动一点点放大着向中间靠拢，落位后回到正常比例，观感像选片墙上滑过来的一张海报。</p>
+        </div>
+      </div>
+
+      <div class="zq_study_key">
+        <b>一句话：</b>prev 管退场、next 管入场，两套 transform 之间由 Swiper 按滑动进度自动插值，不用写关键帧。
+      </div>
+
+      <table class="zq_study_table">
+        <thead><tr><th style="width:20%">参数</th><th style="width:32%">控制什么</th><th>单位 / 说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>translate</code></td><td>三轴位移 [x, y, z]</td><td>x、y 可用像素或百分比，<b>百分比相对幻灯片自身宽高</b>；z 为负表示后退</td></tr>
+          <tr><td><code>rotate</code></td><td>三轴旋转 [x, y, z]</td><td>单位是度；第三位是绕屏幕法线（Z 轴）旋转</td></tr>
+          <tr><td><code>scale</code></td><td>缩放倍数</td><td>0.72 = 缩到 72%，1.14 = 放大到 114%</td></tr>
+          <tr><td><code>opacity</code></td><td>透明度</td><td>0 ~ 1</td></tr>
+          <tr><td><code>shadow</code></td><td>是否投影</td><td>布尔值，增强纵深</td></tr>
+          <tr><td><code>origin</code></td><td>变换原点</td><td>如 <code>'left center'</code>，配合 rotate 做翻书效果</td></tr>
+        </tbody>
+      </table>
+
+      <div class="zq_study_qa">
+        <p><b>答辩一：translate 里的百分号相对谁的？</b>
+          相对<b>幻灯片自身</b>的宽和高，不是相对容器或屏幕。<code>'-55%'</code> 就是「向左移半张多幻灯片的宽度」，
+          所以换成不同尺寸的轮播，位移比例依然成立。</p>
+        <p><b>答辩二：改一个数值让卡片转 20 度？</b>
+          改 <code>rotate</code> 的第三位：<code>rotate:[0,0,20]</code> 顺时针倾斜 20 度，<code>[0,0,-20]</code> 逆时针。
+          若想绕水平轴翻面改第一位（X 轴），绕垂直轴像翻书改第二位（Y 轴）。</p>
+      </div>
+    </div>
+    <!-- 任务三：第六件展品 + 超纲能力（keyboard 键盘控制）+ 与 AI 的关键对话与答辩 -->
+    <div class="zq_study zq_task3">
+      <h3>任务三 · 综合创作：第六件展品「爱达·魔都号」＋ keyboard 键盘控制</h3>
+      <p class="zq_study_lead">
+        演示四的展品已从 5 件扩到 6 件，新增首艘国产大型邮轮<b>爱达·魔都号</b>（2024 年 1 月首航），
+        配图由 AI 生成（横版 16:9，已落到 <code>swiper-imgs/idamo.jpg</code>），slide 结构与其余展品一致：图片 + 标题 + 一句说明。
+        同时补上课堂没讲的第 4 项能力——<b>keyboard 键盘控制</b>：轮播在视口内时，按 ← / → 即可切换。
+      </p>
+
+      <div class="zq_study_row">
+        <div class="zq_study_item">
+          <h4>AI 生成配图的关键提示词</h4>
+          <p>16:9 网站轮播首图：中国首艘国产大型邮轮爱达·魔都号在黄金时刻的海面航行，白色船体带彩色船身涂装，
+             低角度三分之四正面视角，深蓝海面与柔和尾迹，暖色夕阳天空，电影感写实摄影，无文字无水印。</p>
+        </div>
+        <div class="zq_study_item">
+          <h4>为什么选 keyboard</h4>
+          <p>光影展本身是「浏览型」页面，键盘方向键最贴合浏览习惯；且它不改动画参数，不会和七种 effect 打架，
+             重建实例后只要配置仍在就继续生效，答辩时也最容易现场演示。</p>
+        </div>
+      </div>
+
+      <div class="zq_study_key">
+        <b>新增配置：</b>
+        <code>keyboard: { enabled: true, onlyInViewport: true, pageUpDown: false }</code>
+        —— 开启键盘控制；只在轮播进入视口时响应，避免整页滚动时被抢键；关掉 PageUp/PageDown，只留方向键。
+      </div>
+
+      <h4 class="zq_study_sub">与 AI 的关键往返（节选）</h4>
+      <div class="zq_dlg">
+        <div class="zq_tagline">第 1 轮 · 我的提示词</div>
+        <div class="zq_msg zq_me">
+          给 Swiper 11 加上键盘左右切换，轮播不在屏幕里的时候不要响应，别影响页面滚动。
+        </div>
+        <div class="zq_tagline">第 1 轮 · AI 的回答（有问题）</div>
+        <div class="zq_msg zq_ai">
+          给了 <code>keyboard: true</code>，并写成全局 <code>new Swiper('#wySw4', {...})</code> 的一段配置。
+        </div>
+        <div class="zq_tagline">第 2 轮 · 我的追问</div>
+        <div class="zq_msg zq_me">
+          一是 Swiper 11 里 keyboard 是布尔值还是对象？二是这个演示台切换效果时会 destroy 再 new，配置写在外面重建后还生效吗？
+        </div>
+        <div class="zq_tagline">第 2 轮 · AI 的回答（修正后）</div>
+        <div class="zq_msg zq_ai">
+          keyboard 必须写成对象，<code>true</code> 会被当成整体值覆盖默认参数，<code>enabled</code> 实际是 undefined，等于没开；
+          并且要放进 <code>createSw4()</code> 的 cfg 里，否则销毁重建后监听丢失。补上 <code>onlyInViewport:true</code> 解决误触。
+        </div>
+      </div>
+
+      <div class="zq_study_qa">
+        <p><b>答辩一：这段代码什么意思？</b>
+          <code>keyboard</code> 是 Swiper 的键盘模块配置：<code>enabled:true</code> 打开监听；
+          <code>onlyInViewport:true</code> 表示只有轮播在视口内才响应，页面别处滚动不会误切；
+          <code>pageUpDown:false</code> 关掉整页翻页键，只保留 ← / →。配合原有的 <code>loop</code>，到头会无缝接回。</p>
+        <p><b>答辩二：AI 第一次给的哪里不对、你改了什么？</b>
+          第一版把 <code>keyboard</code> 写成布尔值 <code>true</code>，而 Swiper 11 要求对象，布尔值会整体替换默认参数导致 <code>enabled</code> 丢失、键盘根本不生效；
+          第二版把配置写在初始化外面，这个演示台切换效果要 destroy + new，重建后监听就没了。我把它移进 <code>createSw4()</code> 的 cfg，并补上 <code>onlyInViewport</code>。</p>
+        <p><b>答辩三：新参数的作用？</b>
+          <code>onlyInViewport</code>：只在乎轮播可见时接管键盘，防止用户在本页其它区域按方向键被劫持；
+          <code>pageUpDown</code>：控制 PageUp/PageDown 是否也能翻页，关掉后只留方向键，行为更可预期。</p>
+        <p><b>答辩四：现场把 delay 改成指定值，预期变化是什么？</b>
+          例如把 <code>autoplay.delay</code> 由 3200 改成 5000：每张停留时间从 3.2 秒变成 5 秒，单位时间内切换次数明显减少；
+          因为 <code>disableOnInteraction:false</code> 没动，手动拖动后仍会继续自动播放，只是重新从 5 秒开始计时。
+          若同时把 <code>disableOnInteraction</code> 改成 <code>true</code>，手动操作一次后自动播放会彻底停止——这也是两个参数常被一起问的原因。</p>
       </div>
     </div>
   </div>
@@ -289,6 +446,14 @@
       pagination: {
         el: "#wyPag4",
         clickable: true
+      },
+      // 任务三：课堂没讲的 keyboard 键盘控制
+      // 必须写成对象（布尔值 true 会整体覆盖默认参数，导致 enabled 丢失）
+      // onlyInViewport：只在轮播可见时响应，pageUpDown：关掉 PageUp/PageDown，只留方向键
+      keyboard: {
+        enabled: true,
+        onlyInViewport: true,
+        pageUpDown: false
       }
     };
 
@@ -301,6 +466,25 @@
       cfg.flipEffect = { slideShadows: true };
     } else if (effect === "cards") {
       cfg.cardsEffect = { perSlideOffset: 10, perSlideRotate: 2, slideShadows: false };
+    } else if (effect === "creative") {
+      // 第 7 种 creative「电影选片墙」：prev 管推出的上一张，next 管进场的下一张
+      // translate 的百分号以幻灯片自身宽高为基准，z 轴用负值把卡片压进纵深
+      cfg.creativeEffect = {
+        prev: {
+          shadow: true,
+          translate: ["-55%", 0, -320],   // 左移 + 后退，形成纵深
+          rotate: [0, 0, -8],             // 带一点逆时针角度
+          scale: 0.72,                    // 缩小
+          opacity: 0.62
+        },
+        next: {
+          shadow: true,
+          translate: ["85%", 0, -120],    // 停靠右侧
+          rotate: [0, 0, 6],              // 轻微顺时针角度
+          scale: 1.14,                    // 放大后回到地平位置
+          opacity: 0.92
+        }
+      };
     }
 
     swiper4 = new Swiper("#wySw4", cfg);

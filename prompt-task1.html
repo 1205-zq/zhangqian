@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<!--
+  作者：张乾
+  建立时间：2026-11-11 14:10
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：任务一 · 提示词工程师作业页（记录两轮提示词、AI 回答与四项需求的验证结论）
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任务一 · 提示词工程师 · 让 AI 听懂需求</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    background:#f7f4ed;color:#2a2620;line-height:1.85;padding:46px 18px 60px;
+  }
+  .zq_page{max-width:920px;margin:0 auto}
+
+  /* 封面 */
+  .zq_cover{
+    background:#fffdf8;border:1px solid #e6ddcb;border-radius:20px;
+    padding:38px 40px;margin-bottom:26px;box-shadow:0 10px 30px rgba(80,62,30,.07);
+  }
+  .zq_cover span{
+    display:inline-block;font-size:12px;letter-spacing:5px;color:#b07d2b;
+    border:1px solid #e4cf9f;border-radius:999px;padding:6px 18px;margin-bottom:16px;
+  }
+  .zq_cover h1{font-size:31px;letter-spacing:1px;line-height:1.5}
+  .zq_cover h1 em{font-style:normal;color:#b07d2b}
+  .zq_cover p{margin-top:14px;font-size:14px;color:#6c6252;line-height:2}
+  .zq_meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+  .zq_meta i{
+    font-style:normal;font-size:12.5px;color:#7a6a4d;background:#f6efdf;
+    border:1px solid #ecdfc4;border-radius:8px;padding:6px 14px;
+  }
+
+  /* 需求清单 */
+  .zq_req{background:#fffdf8;border:1px solid #e6ddcb;border-radius:18px;padding:26px 30px;margin-bottom:22px}
+  .zq_h2{font-size:19px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .zq_h2 s{
+    display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+    border-radius:9px;background:#b07d2b;color:#fff;font-size:14px;text-decoration:none;
+  }
+  .zq_req ol{margin:8px 0 0 20px;font-size:14.5px;color:#403a30}
+  .zq_req ol li{margin:7px 0}
+  .zq_req code{background:#f4ecd9;color:#8a5c12;padding:1px 7px;border-radius:5px;font-family:Consolas,monospace;font-size:13px}
+
+  /* 轮次卡片 */
+  .zq_round{background:#fffdf8;border:1px solid #e6ddcb;border-radius:18px;padding:26px 30px;margin-bottom:22px}
+  .zq_tag{
+    display:inline-block;font-size:12px;letter-spacing:2px;padding:4px 12px;border-radius:6px;margin-bottom:12px;
+  }
+  .zq_tag.zq_r1{background:#fdeee0;color:#b45309;border:1px solid #f7d3ae}
+  .zq_tag.zq_r2{background:#e8f6ec;color:#15803d;border:1px solid #bfe6cb}
+
+  .zq_block{margin-top:16px}
+  .zq_block h4{
+    font-size:13px;letter-spacing:2px;color:#8a7f6a;margin-bottom:8px;
+    padding-left:10px;border-left:3px solid #d8c7a4;
+  }
+  .zq_bubble{
+    background:#f9f6ee;border:1px dashed #ded2b8;border-radius:12px;
+    padding:14px 18px;font-size:14px;color:#3d372c;line-height:2;
+  }
+  .zq_bubble.zq_ai{background:#f4f7fb;border:1px dashed #c3d3e8;color:#2f3b4d}
+
+  .zq_code{
+    background:#1e2430;color:#c9d6ea;border-radius:12px;padding:16px 18px;
+    font-family:Consolas,"Courier New",monospace;font-size:12.8px;line-height:1.95;overflow:auto;
+  }
+  .zq_code .zq_k{color:#e8b04b}
+  .zq_code .zq_s{color:#93d3a3}
+  .zq_code .zq_c{color:#7b8aa3}
+
+  /* 遗漏清单 */
+  .zq_gap{background:#fff8f2;border:1px solid #f3d9bf;border-radius:12px;padding:16px 20px;margin-top:14px}
+  .zq_gap h4{font-size:13.5px;color:#b45309;margin-bottom:8px}
+  .zq_gap ul{margin-left:18px;font-size:13.5px;color:#6b4a24;line-height:2}
+  .zq_gap b{color:#a13b02}
+
+  /* 验证表 */
+  .zq_table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:14px;background:#fff}
+  .zq_table th,.zq_table td{border:1px solid #e6ddcb;padding:12px 14px;text-align:left;vertical-align:top}
+  .zq_table th{background:#f6efdf;color:#7a5a22;font-weight:bold;font-size:13px;letter-spacing:1px}
+  .zq_table td.zq_ok{color:#15803d;font-weight:bold;white-space:nowrap}
+  .zq_table code{background:#f4ecd9;color:#8a5c12;padding:1px 6px;border-radius:4px;font-family:Consolas,monospace;font-size:12.5px}
+
+  /* 答辩问答 */
+  .zq_qa{background:#fffdf8;border:1px solid #e6ddcb;border-radius:18px;padding:26px 30px;margin-bottom:22px}
+  .zq_qa dt{font-size:14.5px;font-weight:bold;color:#8a5c12;margin-top:16px}
+  .zq_qa dt:first-of-type{margin-top:4px}
+  .zq_qa dd{font-size:14px;color:#463f33;margin:6px 0 0 0;line-height:2}
+
+  .zq_actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px}
+  .zq_actions a{
+    text-decoration:none;font-size:14px;border-radius:999px;padding:11px 28px;transition:all .2s;
+  }
+  .zq_actions .zq_main{background:#b07d2b;color:#fff;border:1px solid #b07d2b}
+  .zq_actions .zq_main:hover{background:#966821;transform:translateY(-2px)}
+  .zq_actions .zq_ghost{color:#8a5c12;border:1px solid #e0cfae;background:#fffdf8}
+  .zq_actions .zq_ghost:hover{background:#f6efdf;transform:translateY(-2px)}
+
+  .zq_foot{text-align:center;margin-top:26px;font-size:12.5px;color:#a3977f}
+
+  @media (max-width:720px){
+    body{padding:28px 12px 44px}
+    .zq_cover{padding:26px 22px}
+    .zq_cover h1{font-size:22px}
+    .zq_round,.zq_req,.zq_qa{padding:20px 18px}
+    .zq_table{font-size:12.5px}
+  }
+</style>
+</head>
+<body>
+<div class="zq_page">
+
+  <header class="zq_cover">
+    <span>任务一 · 提示词工程师</span>
+    <h1>让 AI 听懂需求：<em>Swiper 四条配置</em>的两轮迭代</h1>
+    <p>
+      本页记录任务一的完整过程：第一轮用「随口说」的提示词让 AI 生成代码，第二轮把需求拆成可判定的四条再问一次，
+      最后逐项在页面里验证。可验证页面：<code>swiper-wySw4.html</code>。
+    </p>
+    <div class="zq_meta">
+      <i>作者：张乾</i>
+      <i>建立时间：2026-11-11</i>
+      <i>模型：DeepSeek-V4.1-Flash</i>
+      <i>Swiper 11.0.3（本地离线）</i>
+    </div>
+  </header>
+
+  <section class="zq_req">
+    <h2 class="zq_h2"><s>需</s>任务要求：<code>Swiper('#wySw4', {…})</code></h2>
+    <ol>
+      <li>无缝循环：最后一张之后直接回到第一张，没有空白和卡顿。</li>
+      <li>3.2 秒自动翻页，并且手动操作（拖动、点箭头、点圆点）之后不停止。</li>
+      <li>圆点分页器可以点击，点了直接跳到对应页。</li>
+      <li>初始效果就是 cube（立方体），不是默认的 slide。</li>
+    </ol>
+  </section>
+
+  <!-- 第一轮 -->
+  <section class="zq_round">
+    <span class="zq_tag zq_r1">第 1 轮 · 宽泛提问</span>
+    <h2 class="zq_h2"><s>1</s>只说「做个轮播」，AI 交出的作业</h2>
+
+    <div class="zq_block">
+      <h4>我的提示词</h4>
+      <div class="zq_bubble">
+        帮我用 Swiper 做一个图片轮播，容器 id 是 <code>wySw4</code>，要能自动播放，底部有圆点分页，效果做得炫一点。
+      </div>
+    </div>
+
+    <div class="zq_block">
+      <h4>AI 的回答（代码）</h4>
+      <div class="zq_code"><pre>new Swiper(<span class="zq_s">'#wySw4'</span>, {
+  <span class="zq_k">autoplay</span>: <span class="zq_s">true</span>,
+  <span class="zq_k">pagination</span>: { <span class="zq_k">el</span>: <span class="zq_s">'.swiper-pagination'</span> },
+  <span class="zq_k">effect</span>: <span class="zq_s">'fade'</span>
+});</pre></div>
+    </div>
+
+    <div class="zq_gap">
+      <h4>问题：四条需求只中了一条半</h4>
+      <ul>
+        <li><b>缺无缝循环</b>：没有 <code>loop:true</code>，翻到最后一张就停住。</li>
+        <li><b>缺 3.2 秒</b>：<code>autoplay:true</code> 走默认 3000ms，且默认 <code>disableOnInteraction:true</code>，手动一拖自动播放就永久停了。</li>
+        <li><b>缺可点击</b>：<code>pagination</code> 没写 <code>clickable:true</code>，圆点只能看不能点。</li>
+        <li><b>效果答错</b>：写了 <code>fade</code>（淡入淡出），要求的是 <code>cube</code>。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 第二轮 -->
+  <section class="zq_round">
+    <span class="zq_tag zq_r2">第 2 轮 · 需求拆成可判定条件</span>
+    <h2 class="zq_h2"><s>2</s>把「炫一点」换成四个可验证的判断标准</h2>
+
+    <div class="zq_block">
+      <h4>我的提示词（第二轮）</h4>
+      <div class="zq_bubble">
+        用本地 Swiper 11 的 <code>Swiper('#wySw4', {…})</code> 写配置，只输出配置对象，逐条满足：<br>
+        ① 无缝循环：开启 loop，首尾相接；<br>
+        ② 自动翻页间隔 3200 毫秒，并且手动拖动 / 点击箭头 / 点击圆点之后自动播放<b>不停止</b>；<br>
+        ③ 分页器用圆点样式，允许点击跳页；<br>
+        ④ 初始效果必须是 cube，不要 slide / fade，并给出 cubeEffect 的阴影参数。<br>
+        每条需求后面用注释标出对应选项，方便我逐条核对。
+      </div>
+    </div>
+
+    <div class="zq_block">
+      <h4>AI 的回答（最终配置）</h4>
+      <div class="zq_code"><pre>const zq_wySw4 = new Swiper(<span class="zq_s">'#wySw4'</span>, {
+  <span class="zq_k">effect</span>: <span class="zq_s">'cube'</span>,                    <span class="zq_c">// ④ 初始 cube</span>
+  <span class="zq_k">loop</span>: <span class="zq_s">true</span>,                     <span class="zq_c">// ① 无缝循环</span>
+  <span class="zq_k">autoplay</span>: {
+    <span class="zq_k">delay</span>: <span class="zq_s">3200</span>,                   <span class="zq_c">// ② 3.2 秒</span>
+    <span class="zq_k">disableOnInteraction</span>: <span class="zq_s">false</span> <span class="zq_c">// ② 手动后不停止</span>
+  },
+  <span class="zq_k">pagination</span>: {
+    <span class="zq_k">el</span>: <span class="zq_s">'.zq_pagination'</span>,
+    <span class="zq_k">clickable</span>: <span class="zq_s">true</span>            <span class="zq_c">// ③ 圆点可点击</span>
+  },
+  <span class="zq_k">cubeEffect</span>: { <span class="zq_k">shadow</span>: <span class="zq_s">true</span>, <span class="zq_k">slideShadows</span>: <span class="zq_s">true</span>, <span class="zq_k">shadowOffset</span>: <span class="zq_s">18</span>, <span class="zq_k">shadowScale</span>: <span class="zq_s">0.94</span> },
+  <span class="zq_k">speed</span>: <span class="zq_s">700</span>,
+  <span class="zq_k">grabCursor</span>: <span class="zq_s">true</span>
+});</pre></div>
+    </div>
+
+    <div class="zq_block">
+      <h4>这一轮补上的关键点</h4>
+      <div class="zq_gap">
+        <ul>
+          <li>把「自动播放」写成 <b>数值 + 行为</b>：<code>delay:3200</code> 与 <code>disableOnInteraction:false</code>，一句话同时锁住时长和不中断。</li>
+          <li>把「炫一点」这种形容词换成 <b>枚举值</b> <code>'cube'</code>，AI 没有解释空间。</li>
+          <li>要求 AI <b>逐条加注释</b>，代码交回来能直接对着需求验收，而不是靠肉眼猜哪行对应哪条。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 验证 -->
+  <section class="zq_round">
+    <span class="zq_tag zq_r2">验证 · 真机逐项点过</span>
+    <h2 class="zq_h2"><s>3</s>四条需求的验证结果</h2>
+    <table class="zq_table">
+      <thead>
+        <tr><th style="width:20%">需求</th><th style="width:38%">验证动作</th><th style="width:14%">结果</th><th>一句话结论</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>无缝循环</td>
+          <td>连续点右箭头翻到第 5 张，再点一次</td>
+          <td class="zq_ok">通过</td>
+          <td>第 5 张之后直接回到第 1 张，中间没有空白页。</td>
+        </tr>
+        <tr>
+          <td>3.2 秒自动翻页</td>
+          <td>不操作，掐表观察两次切换</td>
+          <td class="zq_ok">通过</td>
+          <td>每次约 3.2 秒切换一张，与 delay:3200 一致。</td>
+        </tr>
+        <tr>
+          <td>手动后不停止</td>
+          <td>拖动一次并点箭头，然后静置观察</td>
+          <td class="zq_ok">通过</td>
+          <td>手动操作后仍继续自动切换，页面上的切换计数持续增长。</td>
+        </tr>
+        <tr>
+          <td>圆点可点击</td>
+          <td>直接点第 1 个和第 4 个圆点</td>
+          <td class="zq_ok">通过</td>
+          <td>点击后立即跳到对应页，圆点高亮同步变化。</td>
+        </tr>
+        <tr>
+          <td>初始 cube 效果</td>
+          <td>刷新页面观察首屏切换动画</td>
+          <td class="zq_ok">通过</td>
+          <td>首屏切换即为立方体翻转，带阴影，不是平移或淡入。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 答辩 -->
+  <section class="zq_qa">
+    <h2 class="zq_h2"><s>4</s>答辩准备</h2>
+    <dl>
+      <dt>Q1：你的第一版提示词漏掉了哪个需求？</dt>
+      <dd>漏得最彻底的是 cube——我用「炫一点」代替了具体效果名；其次是自动播放的时长和「手动后不停止」这层行为，以及分页器的可点击性、循环开关，都属于我以为 AI 会默认做好、实际并不会的部分。</dd>
+
+      <dt>Q2：你是怎么在第二轮里「说清楚」的？</dt>
+      <dd>把形容词全部换成可判定的条件：效果写枚举值 <code>cube</code>，时长写毫秒数 <code>3200</code>，行为写选项 <code>disableOnInteraction:false</code>，并要求每条需求用注释标注对应选项。这样交回来的代码可以直接逐条验收。</dd>
+
+      <dt>Q3：AI 第一次给的代码错在哪？</dt>
+      <dd>一是效果写成了 <code>fade</code>，与要求的 cube 相反；二是 <code>autoplay:true</code> 用默认值，既不是 3.2 秒，又会在用户交互后永久停止；三是没有 <code>loop</code> 和 <code>clickable</code>，循环和点分页两项需求直接落空。</dd>
+    </dl>
+  </section>
+
+  <div class="zq_actions">
+    <a class="zq_main" href="./swiper-wySw4.html">打开验证页面 wySw4</a>
+    <a class="zq_ghost" href="./index.html">返回课堂首页 index.html</a>
+  </div>
+
+  <p class="zq_foot">张乾 · 高级网页设计 · 任务一 · 提示词记录</p>
+</div>
+</body>
+</html>

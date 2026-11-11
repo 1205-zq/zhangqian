@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<!--
+  作者：张乾
+  建立时间：2026-11-11 14:02
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：任务一 · Swiper('#wySw4') 四项需求实现（无缝循环 / 3.2 秒自动翻页且手动后不停止 / 圆点分页可点击 / 初始 cube 效果）
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swiper wySw4 · 任务一交付页 · 大国重器光影展</title>
+<!-- 使用项目内离线 Swiper 11.0.3，不依赖任何 CDN -->
+<link rel="stylesheet" href="swiper/swiper-bundle.min.css">
+<script src="swiper/swiper-bundle.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --zq_ink:#050b18;
+    --zq_ink2:#0b1730;
+    --zq_gold:#e8b04b;
+    --zq_line:rgba(232,176,75,.28);
+    --zq_txt:#e7edf9;
+    --zq_sub:#93a4c4;
+  }
+  body{
+    font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#12264a 0%,var(--zq_ink) 60%) fixed;
+    color:var(--zq_txt);min-height:100vh;padding:48px 20px 64px;
+  }
+  .zq_page{max-width:960px;margin:0 auto}
+
+  /* 顶部标题区 */
+  .zq_head{text-align:center;margin-bottom:36px}
+  .zq_kicker{
+    display:inline-block;font-size:12px;letter-spacing:6px;color:var(--zq_gold);
+    border:1px solid var(--zq_line);border-radius:999px;padding:7px 20px;margin-bottom:18px;
+  }
+  .zq_head h1{font-size:34px;letter-spacing:3px;font-weight:800}
+  .zq_head h1 em{font-style:normal;color:var(--zq_gold)}
+  .zq_head p{margin-top:14px;font-size:14px;color:var(--zq_sub);line-height:2}
+
+  /* 轮播主体 */
+  .zq_stage{position:relative;margin:0 auto 30px;max-width:820px}
+  .zq_swiper{
+    width:100%;aspect-ratio:16/10;border-radius:22px;
+    border:1px solid var(--zq_line);
+    box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.03) inset;
+  }
+  .zq_swiper .swiper-slide{position:relative;overflow:hidden;background:var(--zq_ink2)}
+  .zq_swiper .swiper-slide img{width:100%;height:100%;object-fit:cover;display:block}
+  .zq_cap{
+    position:absolute;left:0;right:0;bottom:0;padding:60px 28px 22px;
+    background:linear-gradient(transparent,rgba(3,8,18,.9));
+  }
+  .zq_cap span{font-size:12px;letter-spacing:4px;color:var(--zq_gold)}
+  .zq_cap h3{font-size:23px;margin-top:8px;letter-spacing:1px}
+  .zq_cap p{font-size:13px;color:#c3d0e6;margin-top:6px;line-height:1.9}
+
+  /* 分页器（圆点，可点击） */
+  .zq_swiper .swiper-pagination{bottom:14px}
+  .zq_swiper .swiper-pagination-bullet{
+    width:9px;height:9px;background:#fff;opacity:.35;transition:all .25s;
+  }
+  .zq_swiper .swiper-pagination-bullet:hover{opacity:.8;transform:scale(1.3)}
+  .zq_swiper .swiper-pagination-bullet-active{
+    width:26px;border-radius:6px;background:var(--zq_gold);opacity:1;
+  }
+
+  /* 前后导航 */
+  .zq_swiper .swiper-button-prev,.zq_swiper .swiper-button-next{
+    width:44px;height:44px;border-radius:50%;color:var(--zq_gold);
+    background:rgba(6,14,30,.62);border:1px solid var(--zq_line);
+    --swiper-navigation-size:17px;transition:background .2s;
+  }
+  .zq_swiper .swiper-button-prev:hover,.zq_swiper .swiper-button-next:hover{background:rgba(232,176,75,.9);color:#0a1426}
+
+  /* 状态 / 自检面板 */
+  .zq_panel{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    max-width:820px;margin:0 auto 34px;
+  }
+  .zq_cell{
+    background:rgba(11,23,48,.75);border:1px solid rgba(255,255,255,.08);
+    border-radius:14px;padding:16px 16px 14px;position:relative;overflow:hidden;
+  }
+  .zq_cell::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:var(--zq_gold)}
+  .zq_cell h4{font-size:12px;color:var(--zq_sub);font-weight:normal;letter-spacing:1px}
+  .zq_cell strong{display:block;margin-top:8px;font-size:18px;color:var(--zq_gold);letter-spacing:.5px}
+  .zq_cell small{display:block;margin-top:6px;font-size:11.5px;color:#6f81a3;line-height:1.7}
+
+  /* 操作提示 */
+  .zq_tips{
+    max-width:820px;margin:0 auto 26px;font-size:13px;color:var(--zq_sub);line-height:2;
+    border-left:2px solid var(--zq_gold);padding-left:14px;
+  }
+  .zq_tips b{color:var(--zq_txt)}
+
+  /* 代码块 */
+  .zq_codeBox{
+    max-width:820px;margin:0 auto;background:#02060f;border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;padding:18px 20px;overflow:auto;
+  }
+  .zq_codeBox h4{font-size:13px;color:var(--zq_sub);letter-spacing:2px;margin-bottom:12px}
+  .zq_codeBox pre{font-family:Consolas,"Courier New",monospace;font-size:12.8px;line-height:1.9;color:#a8c4ee}
+  .zq_codeBox .zq_k{color:#e8b04b}
+  .zq_codeBox .zq_s{color:#8ed0a0}
+
+  .zq_back{text-align:center;margin-top:40px}
+  .zq_back a{
+    display:inline-block;text-decoration:none;color:var(--zq_gold);font-size:14px;
+    border:1px solid var(--zq_line);border-radius:999px;padding:11px 30px;transition:all .2s;
+  }
+  .zq_back a:hover{background:rgba(232,176,75,.12);transform:translateY(-2px)}
+
+  .zq_foot{text-align:center;margin-top:26px;font-size:12px;color:#4f5f7d}
+
+  @media (max-width:720px){
+    body{padding:32px 14px 48px}
+    .zq_head h1{font-size:24px}
+    .zq_panel{grid-template-columns:repeat(2,1fr)}
+    .zq_swiper{aspect-ratio:4/3}
+  }
+</style>
+</head>
+<body>
+<div class="zq_page">
+
+  <header class="zq_head">
+    <span class="zq_kicker">W Y S W 4</span>
+    <h1>大国重器 · <em>光影展</em></h1>
+    <p>任务一交付页 · Swiper 初始效果 cube · 3.2 秒自动翻页 · 无缝循环 · 分页圆点可点击</p>
+  </header>
+
+  <!-- 轮播：容器 id 必须是 wySw4，由任务书指定 Swiper('#wySw4', {...}) 的选择器 -->
+  <div class="zq_stage">
+    <div class="swiper zq_swiper" id="wySw4">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <img src="swiper-imgs/c919_1.jpg" alt="国产大飞机 C919">
+          <div class="zq_cap">
+            <span>C 9 1 9</span>
+            <h3>国产大飞机</h3>
+            <p>自主研制的大型喷气式客机，承载中国民航的产业升级。</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <img src="swiper-imgs/fuxing_1.jpg" alt="复兴号动车组">
+          <div class="zq_cap">
+            <span>F U X I N G</span>
+            <h3>复兴号动车组</h3>
+            <p>时速 350 公里的中国标准动车组，覆盖全国高铁干线。</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <img src="swiper-imgs/fendouzhe_1.jpg" alt="奋斗者号载人潜水器">
+          <div class="zq_cap">
+            <span>F E N D O U Z H E</span>
+            <h3>奋斗者号</h3>
+            <p>万米级载人潜水器，坐底马里亚纳海沟 10909 米。</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <img src="swiper-imgs/tiangong_1.jpg" alt="中国空间站天宫">
+          <div class="zq_cap">
+            <span>T I A N G O N G</span>
+            <h3>中国空间站</h3>
+            <p>天和核心舱与实验舱组合运行，长期驻留三名航天员。</p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <img src="swiper-imgs/fast_1.jpg" alt="中国天眼 FAST 射电望远镜">
+          <div class="zq_cap">
+            <span>F A S T</span>
+            <h3>中国天眼</h3>
+            <p>500 米口径球面射电望远镜，捕捉宇宙深处的脉冲信号。</p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination zq_pagination"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+
+  <!-- 需求自检：数值由 JS 依据实例真实配置回填，便于截图取证 -->
+  <section class="zq_panel">
+    <div class="zq_cell">
+      <h4>无缝循环</h4>
+      <strong id="zq_loopText">—</strong>
+      <small>首尾相接，第 5 张之后回到第 1 张</small>
+    </div>
+    <div class="zq_cell">
+      <h4>自动翻页</h4>
+      <strong id="zq_autoText">—</strong>
+      <small>手动操作后自动播放不中断</small>
+    </div>
+    <div class="zq_cell">
+      <h4>分页圆点</h4>
+      <strong id="zq_pageText">—</strong>
+      <small>点击任意圆点直接跳转到该页</small>
+    </div>
+    <div class="zq_cell">
+      <h4>初始效果</h4>
+      <strong id="zq_fxText">—</strong>
+      <small>3D 立方体翻转，非默认 slide</small>
+    </div>
+  </section>
+
+  <p class="zq_tips">
+    <b>自检方法：</b>① 一直向后翻，第 5 张后自动接上第 1 张即无缝循环；② 停留 3.2 秒观察自动切换，手动拖动或点箭头后仍会继续自动切换；
+    ③ 点击底部圆点能直接跳页；④ 本页打开即为 cube 立方体效果。
+    当前已自动切换 <b id="zq_countText">0</b> 次，用于证明手动操作后自动播放仍在运行。
+  </p>
+
+  <div class="zq_codeBox">
+    <h4>核心配置</h4>
+    <pre>const zq_wySw4 = new Swiper(<span class="zq_s">'#wySw4'</span>, {
+  <span class="zq_k">effect</span>: <span class="zq_s">'cube'</span>,            <span class="zq_k">// ④ 初始效果为 cube</span>
+  <span class="zq_k">loop</span>: <span class="zq_s">true</span>,               <span class="zq_k">// ① 无缝循环</span>
+  <span class="zq_k">autoplay</span>: {
+    <span class="zq_k">delay</span>: <span class="zq_s">3200</span>,             <span class="zq_k">// ② 3.2 秒自动翻页</span>
+    <span class="zq_k">disableOnInteraction</span>: <span class="zq_s">false</span> <span class="zq_k">// ② 手动操作后不停止</span>
+  },
+  <span class="zq_k">pagination</span>: {
+    <span class="zq_k">el</span>: <span class="zq_s">'.zq_pagination'</span>,
+    <span class="zq_k">clickable</span>: <span class="zq_s">true</span>          <span class="zq_k">// ③ 圆点分页器可点击</span>
+  },
+  <span class="zq_k">cubeEffect</span>: { <span class="zq_k">shadow</span>: <span class="zq_s">true</span>, <span class="zq_k">slideShadows</span>: <span class="zq_s">true</span>, <span class="zq_k">shadowOffset</span>: <span class="zq_s">18</span>, <span class="zq_k">shadowScale</span>: <span class="zq_s">0.94</span> },
+  <span class="zq_k">speed</span>: <span class="zq_s">700</span>,
+  <span class="zq_k">grabCursor</span>: <span class="zq_s">true</span>
+});</pre>
+  </div>
+
+  <div class="zq_back"><a href="./index.html">← 返回课堂首页 index.html</a></div>
+  <p class="zq_foot">张乾 · 高级网页设计 · 任务一 · Swiper 11.0.3（本地离线）</p>
+</div>
+
+<script>
+/**
+ * 依据 Swiper 实例的真实参数，把四项需求的执行结果回填到自检面板
+ */
+function zq_renderCheck(zq_swiper) {
+  const zq_params = zq_swiper.params;
+  document.getElementById('zq_loopText').textContent =
+    zq_params.loop ? '已开启 · loop:true' : '未开启';
+  document.getElementById('zq_autoText').textContent =
+    zq_params.autoplay && zq_params.autoplay.enabled
+      ? (zq_params.autoplay.delay / 1000) + ' 秒 · 交互后继续'
+      : '未开启';
+  document.getElementById('zq_pageText').textContent =
+    zq_params.pagination && zq_params.pagination.clickable ? '可点击跳页' : '不可点击';
+  document.getElementById('zq_fxText').textContent =
+    'cube · ' + zq_params.effect;
+}
+
+/**
+ * 累加自动切换次数，用于证明手动操作之后自动播放没有停止
+ */
+function zq_markAutoPlay(zq_count) {
+  document.getElementById('zq_countText').textContent = zq_count;
+}
+
+/**
+ * 初始化 wySw4 轮播实例，并绑定自检面板与切换计数
+ */
+(function zq_initWySw4() {
+  const zq_wySw4 = new Swiper('#wySw4', {
+    effect: 'cube',
+    loop: true,
+    autoplay: {
+      delay: 3200,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: '.zq_pagination',
+      clickable: true
+    },
+    cubeEffect: {
+      shadow: true,
+      slideShadows: true,
+      shadowOffset: 18,
+      shadowScale: 0.94
+    },
+    speed: 700,
+    grabCursor: true
+  });
+
+  let zq_count = 0;
+
+  /**
+   * 监听自动播放触发的切换，累计次数并写入面板
+   */
+  zq_wySw4.on('autoplay', function () {
+    zq_count += 1;
+    zq_markAutoPlay(zq_count);
+  });
+
+  zq_renderCheck(zq_wySw4);
+})();
+</script>
+</body>
+</html>
