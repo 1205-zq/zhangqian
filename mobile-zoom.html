@@ -1,0 +1,407 @@
+<!doctype html>
+<!--
+  作者：张乾
+  学号：（请填写）
+  建立时间：2026-11-18 13:55
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：任务三 · 图片查看器 — 双指缩放（1×~4×）、双击 1×/2×、放大后单指拖动
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>任务三 · 图片查看器</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+      body {
+        min-height: 100vh;
+        padding: 20px 16px 32px;
+        background: #0e0f13;
+        color: #e8e4dc;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .zq_page { max-width: 520px; margin: 0 auto; }
+
+      .zq_top { text-align: center; margin-bottom: 18px; }
+
+      .zq_top h1 { font-size: 19px; font-weight: 600; letter-spacing: 4px; }
+
+      .zq_top p { margin-top: 8px; font-size: 12px; letter-spacing: 1px; color: #7d7f88; }
+
+      /* 查看器：裁掉溢出部分，手势全部由脚本接管 */
+      .zq_viewer {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        background: #05060a;
+        aspect-ratio: 16 / 9;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        box-shadow: 0 20px 46px rgba(0, 0, 0, 0.6);
+      }
+
+      .zq_img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform-origin: 0 0;
+        transform: translate3d(0, 0, 0) scale(1);
+        transition: transform 0.25s ease;
+        will-change: transform;
+      }
+
+      /* 拖动 / 缩放过程中关掉过渡，做到完全跟手 */
+      .zq_img.zq_dragging { transition: none; }
+
+      .zq_badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 5px 11px;
+        border-radius: 999px;
+        background: rgba(10, 12, 18, 0.62);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #f0e6d2;
+        font-family: Consolas, monospace;
+        pointer-events: none;
+      }
+
+      .zq_tips {
+        position: absolute;
+        left: 50%;
+        bottom: 14px;
+        transform: translateX(-50%);
+        max-width: calc(100% - 32px);
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(10, 12, 18, 0.66);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        font-size: 12px;
+        line-height: 1.6;
+        text-align: center;
+        color: #d9d2c4;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+
+      .zq_tips.zq_hide { opacity: 0; }
+
+      .zq_bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 16px;
+        padding: 0 2px;
+      }
+
+      .zq_bar span { font-size: 12.5px; letter-spacing: 1px; color: #86888f; }
+
+      .zq_btn {
+        padding: 9px 20px;
+        border: 1px solid #33363f;
+        border-radius: 999px;
+        background: transparent;
+        font-size: 12.5px;
+        letter-spacing: 2px;
+        color: #d8c8a6;
+        font-family: inherit;
+      }
+
+      .zq_btn:active { background: #1b1e26; }
+
+      .zq_faq {
+        margin-top: 26px;
+        padding: 18px 18px 16px;
+        border: 1px solid #23262e;
+        border-radius: 12px;
+        background: #14161c;
+      }
+
+      .zq_faq h2 {
+        margin-bottom: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #d8c8a6;
+      }
+
+      .zq_faq p { font-size: 12.5px; line-height: 2.05; color: #9a9ca4; }
+
+      .zq_faq a { color: #c0a877; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="zq_page">
+      <header class="zq_top">
+        <h1>图片查看器</h1>
+        <p>双指缩放 · 双击切换 · 放大后拖动</p>
+      </header>
+
+      <div class="zq_viewer" id="zq_viewer">
+        <img class="zq_img" id="zq_img" src="./swiper-imgs/idamo.jpg" alt="爱达·魔都号" />
+        <div class="zq_badge" id="zq_badge">1.0×</div>
+        <div class="zq_tips" id="zq_tips">双指缩放请用手机打开</div>
+      </div>
+
+      <div class="zq_bar">
+        <span>缩放范围 1× ~ 4×</span>
+        <button class="zq_btn" id="zq_reset">重置</button>
+      </div>
+
+      <section class="zq_faq">
+        <h2>如何保证缩放不"跳"</h2>
+        <p>
+          ① 第一帧只记录距离，不参与计算，避免拿 0 去做除数；<br />
+          ② 每一帧都用「两指中点」当锚点：先把这个点在图片上的位置反算出来，缩放后让它仍落在原来的屏幕位置；<br />
+          ③ 两指距离用同一套 client 坐标计算，不混用 page 坐标；<br />
+          ④ 每次 touchstart 都把上一轮的距离清空，防止用残留数据比较导致画面突跳。<br />
+          <a href="./index.html" target="_top">← 返回课堂实践中心</a>
+        </p>
+      </section>
+    </div>
+
+    <script>
+      var zq_viewer = document.getElementById('zq_viewer');
+      var zq_img = document.getElementById('zq_img');
+      var zq_badge = document.getElementById('zq_badge');
+      var zq_tips = document.getElementById('zq_tips');
+      var zq_resetBtn = document.getElementById('zq_reset');
+
+      var zq_MIN = 1;            // 最小倍数
+      var zq_MAX = 4;            // 最大倍数
+      var zq_scale = 1;          // 当前缩放倍数
+      var zq_tx = 0;             // 当前横向位移
+      var zq_ty = 0;             // 当前纵向位移
+
+      var zq_mode = 'none';      // none / pan / pinch，当前手势类型
+      var zq_startDist = 0;      // 双指起始距离
+      var zq_startScale = 1;     // 双指按下时的倍数
+      var zq_startTx = 0;        // 双指按下时的位移
+      var zq_startTy = 0;
+      var zq_startMid = { x: 0, y: 0 };  // 双指按下时的中点
+      var zq_startX = 0;         // 单指拖动起点
+      var zq_startY = 0;
+      var zq_moved = false;      // 本轮手势是否发生过移动，用于区分点击与拖动
+      var zq_lastTap = 0;        // 上次轻点的时间戳
+
+      /**
+       * 取两根手指之间的直线距离，等价于勾股定理
+       */
+      function zq_dist(zq_t1, zq_t2) {
+        return Math.hypot(zq_t2.clientX - zq_t1.clientX, zq_t2.clientY - zq_t1.clientY);
+      }
+
+      /**
+       * 取两根手指的中点坐标，并换算成相对查看器左上角的坐标
+       */
+      function zq_midOf(zq_t1, zq_t2) {
+        var zq_rect = zq_viewer.getBoundingClientRect();
+        return {
+          x: (zq_t1.clientX + zq_t2.clientX) / 2 - zq_rect.left,
+          y: (zq_t1.clientY + zq_t2.clientY) / 2 - zq_rect.top
+        };
+      }
+
+      /**
+       * 把位移限制在图片边界内：放大后不能拖出空白，1 倍时位移归零
+       */
+      function zq_clamp() {
+        var zq_w = zq_viewer.clientWidth;
+        var zq_h = zq_viewer.clientHeight;
+        var zq_minX = zq_w - zq_w * zq_scale;
+        var zq_minY = zq_h - zq_h * zq_scale;
+
+        zq_tx = Math.min(0, Math.max(zq_minX, zq_tx));
+        zq_ty = Math.min(0, Math.max(zq_minY, zq_ty));
+      }
+
+      /**
+       * 把当前倍数与位移写进样式，并同步右上角的比例指示器
+       */
+      function zq_apply(zq_animate) {
+        if (zq_animate) {
+          zq_img.classList.remove('zq_dragging');
+        } else {
+          zq_img.classList.add('zq_dragging');
+        }
+        zq_img.style.transform =
+          'translate3d(' + zq_tx + 'px, ' + zq_ty + 'px, 0) scale(' + zq_scale + ')';
+        zq_badge.textContent = zq_scale.toFixed(1) + '×';
+      }
+
+      /**
+       * 手指按下：区分单指拖动与双指缩放，并记录各自的起点
+       */
+      function zq_onStart(zq_e) {
+        zq_moved = false;
+        zq_hideTips();
+
+        if (zq_e.touches.length >= 2) {
+          zq_mode = 'pinch';
+          zq_startDist = zq_dist(zq_e.touches[0], zq_e.touches[1]);
+          zq_startScale = zq_scale;
+          zq_startTx = zq_tx;
+          zq_startTy = zq_ty;
+          zq_startMid = zq_midOf(zq_e.touches[0], zq_e.touches[1]);
+          return;
+        }
+
+        zq_mode = 'pan';
+        zq_startX = zq_e.touches[0].clientX;
+        zq_startY = zq_e.touches[0].clientY;
+        zq_startTx = zq_tx;
+        zq_startTy = zq_ty;
+      }
+
+      /**
+       * 手指移动：双指按距离比例缩放（以两指中点为锚），单指在放大后拖动
+       */
+      function zq_onMove(zq_e) {
+        if (zq_e.touches.length >= 2) {
+          // 第二根手指中途加入时，重新记录起始状态
+          if (zq_mode !== 'pinch') {
+            zq_onStart(zq_e);
+            return;
+          }
+
+          zq_e.preventDefault();
+          zq_moved = true;
+
+          var zq_d = zq_dist(zq_e.touches[0], zq_e.touches[1]);
+          var zq_next = Math.min(zq_MAX, Math.max(zq_MIN, zq_startScale * (zq_d / zq_startDist)));
+          var zq_k = zq_next / zq_startScale;
+          var zq_mid = zq_midOf(zq_e.touches[0], zq_e.touches[1]);
+
+          // 以中点为锚点：缩放前后，中点下方的图像内容保持不动
+          zq_tx = zq_mid.x - zq_k * (zq_startMid.x - zq_startTx);
+          zq_ty = zq_mid.y - zq_k * (zq_startMid.y - zq_startTy);
+          zq_scale = zq_next;
+          zq_clamp();
+          zq_apply(false);
+          return;
+        }
+
+        if (zq_mode !== 'pan') { return; }
+
+        var zq_t = zq_e.touches[0];
+        var zq_dx = zq_t.clientX - zq_startX;
+        var zq_dy = zq_t.clientY - zq_startY;
+
+        if (Math.abs(zq_dx) > 8 || Math.abs(zq_dy) > 8) {
+          zq_moved = true;
+        }
+
+        // 1 倍时不允许拖动，否则图片会被拖出容器
+        if (zq_scale <= 1) { return; }
+
+        zq_e.preventDefault();
+        zq_tx = zq_startTx + zq_dx;
+        zq_ty = zq_startTy + zq_dy;
+        zq_clamp();
+        zq_apply(false);
+      }
+
+      /**
+       * 手指抬起：结束手势、统一回弹到合法边界，并识别双击
+       */
+      function zq_onEnd(zq_e) {
+        // 双指收起：清掉轻点计时，避免误判成双击
+        if (zq_mode === 'pinch') {
+          zq_mode = 'none';
+          zq_lastTap = 0;
+          zq_clamp();
+          zq_apply(true);
+          return;
+        }
+
+        // 拖动结束：把图片吸附回边界内
+        if (zq_moved) {
+          zq_mode = 'none';
+          zq_clamp();
+          zq_apply(true);
+          return;
+        }
+
+        zq_mode = 'none';
+
+        // 轻点：两次间隔小于 300ms 视为双击
+        var zq_now = Date.now();
+        if (zq_now - zq_lastTap < 300) {
+          var zq_rect = zq_viewer.getBoundingClientRect();
+          var zq_pt = {
+            x: zq_e.changedTouches[0].clientX - zq_rect.left,
+            y: zq_e.changedTouches[0].clientY - zq_rect.top
+          };
+          zq_zoomTo(zq_scale > 1.05 ? 1 : 2, zq_pt);
+          zq_lastTap = 0;
+        } else {
+          zq_lastTap = zq_now;
+        }
+      }
+
+      /**
+       * 以某个屏幕点为锚点缩放到指定倍数，双击切换与重置都走这里
+       */
+      function zq_zoomTo(zq_target, zq_point) {
+        var zq_k = zq_target / zq_scale;
+        zq_tx = zq_point.x - zq_k * (zq_point.x - zq_tx);
+        zq_ty = zq_point.y - zq_k * (zq_point.y - zq_ty);
+        zq_scale = zq_target;
+        zq_clamp();
+        zq_apply(true);
+      }
+
+      /**
+       * 第一次触摸后收起底部提示，避免挡住图片
+       */
+      function zq_hideTips() {
+        zq_tips.classList.add('zq_hide');
+      }
+
+      /**
+       * 屏幕旋转或窗口尺寸变化后，重新计算边界，保持当前缩放状态
+       */
+      function zq_onResize() {
+        zq_clamp();
+        zq_apply(false);
+      }
+
+      /**
+       * 重置按钮：回到 1 倍并让图片居中
+       */
+      function zq_onReset() {
+        zq_clamp();
+        zq_zoomTo(1, { x: zq_viewer.clientWidth / 2, y: zq_viewer.clientHeight / 2 });
+      }
+
+      /**
+       * 手势被系统打断（来电、通知）时结束手势并复位，不参与双击判定
+       */
+      function zq_onCancel() {
+        zq_mode = 'none';
+        zq_moved = false;
+        zq_lastTap = 0;
+        zq_clamp();
+        zq_apply(true);
+      }
+
+      zq_viewer.addEventListener('touchstart', zq_onStart, { passive: false });
+      zq_viewer.addEventListener('touchmove', zq_onMove, { passive: false });
+      zq_viewer.addEventListener('touchend', zq_onEnd);
+      zq_viewer.addEventListener('touchcancel', zq_onCancel);
+      zq_resetBtn.addEventListener('click', zq_onReset);
+      window.addEventListener('resize', zq_onResize);
+
+      // 初始按 1 倍居中渲染
+      zq_clamp();
+      zq_apply(true);
+    </script>
+  </body>
+</html>

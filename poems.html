@@ -1,0 +1,254 @@
+<!doctype html>
+<!--
+  作者：张乾
+  建立时间：2026-11-13 14:08
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：诗词图集 — 上图下文卡片，数据由 db/server.js（端口 3004）提供
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>诗词图集 · 上图下文</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        padding: 48px 24px 64px;
+        background: #f6f3ec;
+        background-image:
+          radial-gradient(circle at 12% 8%, rgba(178, 140, 88, 0.12), transparent 46%),
+          radial-gradient(circle at 88% 92%, rgba(90, 120, 108, 0.12), transparent 48%);
+        font-family: "Songti SC", "SimSun", "Noto Serif SC", Georgia, serif;
+        color: #2c2a26;
+      }
+
+      .zq_wrap { max-width: 1180px; margin: 0 auto; }
+
+      .zq_head { text-align: center; margin-bottom: 44px; }
+
+      .zq_kicker {
+        display: inline-block;
+        padding: 5px 14px;
+        margin-bottom: 16px;
+        border: 1px solid #c9b998;
+        border-radius: 999px;
+        font-size: 12px;
+        letter-spacing: 3px;
+        color: #8a7448;
+      }
+
+      .zq_head h1 {
+        font-size: 34px;
+        font-weight: normal;
+        letter-spacing: 6px;
+        color: #1f1d19;
+      }
+
+      .zq_head h1::after {
+        content: "";
+        display: block;
+        width: 46px;
+        height: 2px;
+        margin: 18px auto 0;
+        background: #b28c58;
+      }
+
+      .zq_head p {
+        margin-top: 16px;
+        font-size: 13.5px;
+        letter-spacing: 1px;
+        color: #8b8577;
+      }
+
+      .zq_head a {
+        color: #8a7448;
+        text-decoration: none;
+        border-bottom: 1px dashed #c9b998;
+      }
+
+      .zq_head a:hover { color: #5a4a2a; border-bottom-style: solid; }
+
+      /* 上图下文栅格 */
+      .zq_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 28px;
+      }
+
+      .zq_card {
+        background: #fffdf8;
+        border: 1px solid #e6ddc9;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(120, 100, 70, 0.06);
+        transition: transform 0.28s ease, box-shadow 0.28s ease;
+      }
+
+      .zq_card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 30px rgba(120, 100, 70, 0.14);
+      }
+
+      .zq_card_pic {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        background: #ece5d6;
+      }
+
+      .zq_card_pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s ease;
+      }
+
+      .zq_card:hover .zq_card_pic img { transform: scale(1.06); }
+
+      .zq_card_text { padding: 22px 22px 26px; }
+
+      .zq_card_text h2 {
+        font-size: 19px;
+        font-weight: normal;
+        letter-spacing: 3px;
+        color: #1f1d19;
+      }
+
+      .zq_card_text h2::after {
+        content: "";
+        display: block;
+        width: 24px;
+        height: 1px;
+        margin: 12px 0 14px;
+        background: #c9b998;
+      }
+
+      .zq_card_text p {
+        font-size: 14px;
+        line-height: 2;
+        color: #6a6459;
+      }
+
+      /* 状态提示 */
+      .zq_state {
+        padding: 40px 20px;
+        text-align: center;
+        font-size: 14px;
+        line-height: 2.2;
+        color: #8b8577;
+      }
+
+      .zq_state code {
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #efe8da;
+        color: #7a5c22;
+        font-family: Consolas, monospace;
+        font-size: 13px;
+      }
+
+      .zq_state strong { color: #b4553a; }
+
+      footer {
+        margin-top: 56px;
+        text-align: center;
+        font-size: 12.5px;
+        letter-spacing: 2px;
+        color: #a49c8b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="zq_wrap">
+      <header class="zq_head">
+        <span class="zq_kicker">POEMS · 上图下文</span>
+        <h1>诗词图集</h1>
+        <p>数据来源：db/db.json 的 poems 字段 · 由 db/server.js 在 <code>3004</code> 端口提供</p>
+        <p><a href="./index.html">← 返回课堂实践中心</a></p>
+      </header>
+
+      <div class="zq_state" id="zq_state">正在读取诗词数据…</div>
+      <section class="zq_grid" id="zq_grid"></section>
+
+      <footer>张乾 · 高级网页设计课堂实践</footer>
+    </div>
+
+    <script>
+      // 数据接口地址：由 db/server.js 在 3004 端口提供
+      var zq_ORIGIN = 'http://127.0.0.1:3004';
+      var zq_API = zq_ORIGIN + '/api/poems';
+
+      /**
+       * 转义文本中的特殊字符，避免诗词内容破坏 HTML 结构
+       */
+      function zq_escape(zq_text) {
+        return String(zq_text == null ? '' : zq_text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      /**
+       * 把诗词里的相对图片路径补全为数据服务上的完整地址
+       */
+      function zq_resolvePic(zq_pic) {
+        var zq_path = String(zq_pic == null ? '' : zq_pic);
+        if (/^https?:\/\//i.test(zq_path)) { return zq_path; }
+        return zq_ORIGIN + '/' + zq_path.replace(/^\/+/, '');
+      }
+
+      /**
+       * 把一条诗词数据渲染成「上图下文」卡片
+       */
+      function zq_renderCard(zq_item) {
+        return (
+          '<article class="zq_card">' +
+            '<div class="zq_card_pic">' +
+              '<img src="' + zq_escape(zq_resolvePic(zq_item.pic)) + '" alt="' + zq_escape(zq_item.title) + '" loading="lazy" />' +
+            '</div>' +
+            '<div class="zq_card_text">' +
+              '<h2>' + zq_escape(zq_item.title) + '</h2>' +
+              '<p>' + zq_escape(zq_item.content) + '</p>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      /**
+       * 请求接口并把返回的诗词列表渲染到页面
+       */
+      function zq_loadPoems() {
+        var zq_state = document.getElementById('zq_state');
+        var zq_grid = document.getElementById('zq_grid');
+
+        fetch(zq_API)
+          .then(function (zq_res) {
+            if (!zq_res.ok) { throw new Error('接口返回 ' + zq_res.status); }
+            return zq_res.json();
+          })
+          .then(function (zq_json) {
+            var zq_list = zq_json.data || [];
+            if (!zq_list.length) {
+              zq_state.innerHTML = 'poems 中没有数据，请在 db/db.json 里补充。';
+              return;
+            }
+            zq_grid.innerHTML = zq_list.map(zq_renderCard).join('');
+            zq_state.style.display = 'none';
+          })
+          .catch(function (zq_err) {
+            zq_state.innerHTML =
+              '<strong>数据加载失败：' + zq_escape(zq_err.message) + '</strong><br />' +
+              '请先启动数据服务：在项目根目录执行 <code>node db/server.js</code><br />' +
+              '启动后访问 <code>http://127.0.0.1:3004/poems.html</code>';
+          });
+      }
+
+      // 页面脚本就绪后立即请求数据
+      zq_loadPoems();
+    </script>
+  </body>
+</html>

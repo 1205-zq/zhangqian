@@ -1,0 +1,472 @@
+<!doctype html>
+<!--
+  作者：张乾
+  学号：（请填写）
+  建立时间：2026-11-18 14:00
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：任务一 · 事件侦探 — 实时打印触摸事件顺序与触点坐标，并附观察记录表
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>任务一 · 事件侦探</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+      body {
+        min-height: 100vh;
+        padding: 20px 16px 40px;
+        background: #0d1117;
+        color: #e6e2d8;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .zq_page { max-width: 560px; margin: 0 auto; }
+
+      .zq_top { text-align: center; margin-bottom: 20px; }
+
+      .zq_top h1 { font-size: 19px; font-weight: 600; letter-spacing: 4px; }
+
+      .zq_top p { margin-top: 8px; font-size: 12px; line-height: 1.9; color: #7c8593; }
+
+      /* 探针区：所有触摸事件在这里被监听 */
+      .zq_pad {
+        position: relative;
+        height: 220px;
+        border-radius: 14px;
+        background: #05070c;
+        border: 1px solid #1d2431;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+
+      .zq_canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+      .zq_pad_tip {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 13px;
+        letter-spacing: 1px;
+        color: #4d5768;
+        pointer-events: none;
+      }
+
+      .zq_pad_tip b { font-size: 15px; font-weight: 500; color: #7d879a; letter-spacing: 2px; }
+
+      .zq_pad.zq_active .zq_pad_tip { opacity: 0; }
+
+      /* 计数条 */
+      .zq_stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .zq_stat {
+        padding: 10px 4px;
+        border: 1px solid #1d2431;
+        border-radius: 10px;
+        background: #121822;
+        text-align: center;
+      }
+
+      .zq_stat em {
+        display: block;
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 600;
+        color: #d8b26a;
+        font-family: Consolas, monospace;
+      }
+
+      .zq_stat span { font-size: 10.5px; letter-spacing: 0.5px; color: #6f7a8b; }
+
+      /* 本轮顺序 */
+      .zq_seqrow {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: #121822;
+        border: 1px solid #1d2431;
+        font-size: 12.5px;
+        line-height: 1.9;
+        color: #9aa5b6;
+        word-break: break-all;
+      }
+
+      .zq_seqrow b { color: #d8b26a; font-weight: 500; }
+
+      /* 日志 */
+      .zq_logwrap {
+        margin-top: 14px;
+        border: 1px solid #1d2431;
+        border-radius: 12px;
+        background: #0a0e14;
+        overflow: hidden;
+      }
+
+      .zq_loghead {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-bottom: 1px solid #1d2431;
+        font-size: 11.5px;
+        letter-spacing: 1px;
+        color: #6f7a8b;
+      }
+
+      .zq_loghead button {
+        border: none;
+        background: none;
+        font-size: 11.5px;
+        color: #8d7a4e;
+        font-family: inherit;
+      }
+
+      .zq_log {
+        max-height: 208px;
+        overflow-y: auto;
+        padding: 6px 14px 12px;
+        font-family: Consolas, "Courier New", monospace;
+        font-size: 12px;
+        line-height: 2;
+      }
+
+      .zq_log div { color: #7f8b9d; }
+      .zq_log div i { display: inline-block; width: 62px; color: #4a5462; font-style: normal; }
+      .zq_log .zq_ev_start { color: #6fcf97; }
+      .zq_log .zq_ev_move { color: #7fb3f0; }
+      .zq_log .zq_ev_end { color: #e6a86a; }
+      .zq_log .zq_ev_click { color: #c792ea; }
+      .zq_log .zq_ev_cancel { color: #e06c75; }
+
+      /* 记录表与问答 */
+      .zq_block {
+        margin-top: 26px;
+        padding: 18px 16px;
+        border: 1px solid #1d2431;
+        border-radius: 12px;
+        background: #121822;
+      }
+
+      .zq_block h2 {
+        margin-bottom: 14px;
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #d8b26a;
+      }
+
+      .zq_block table { width: 100%; border-collapse: collapse; font-size: 12px; line-height: 1.85; }
+
+      .zq_block th,
+      .zq_block td {
+        padding: 9px 8px;
+        border-bottom: 1px solid #1d2431;
+        text-align: left;
+        vertical-align: top;
+        color: #9aa5b6;
+      }
+
+      .zq_block th { color: #6f7a8b; font-weight: 500; letter-spacing: 1px; }
+      .zq_block td:first-child { color: #d5deea; white-space: nowrap; }
+      .zq_block tr:last-child td { border-bottom: none; }
+      .zq_block code { color: #d8b26a; font-family: Consolas, monospace; }
+
+      .zq_qa { margin-top: 14px; }
+
+      .zq_qa article {
+        padding: 12px 0;
+        border-bottom: 1px dashed #1d2431;
+      }
+
+      .zq_qa article:last-child { border-bottom: none; padding-bottom: 0; }
+
+      .zq_qa h3 {
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.8;
+        color: #d5deea;
+      }
+
+      .zq_qa p {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 2;
+        color: #8b96a6;
+      }
+
+      .zq_foot { margin-top: 26px; text-align: center; font-size: 12px; color: #5c6675; }
+      .zq_foot a { color: #a98d5c; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="zq_page">
+      <header class="zq_top">
+        <h1>事件侦探</h1>
+        <p>在下方黑色区域里按一下、拖一拖、再抬起<br />右侧日志会按真实顺序记录每一次事件</p>
+      </header>
+
+      <div class="zq_pad" id="zq_pad">
+        <canvas class="zq_canvas" id="zq_canvas"></canvas>
+        <div class="zq_pad_tip">
+          <b>触摸探针</b>
+          <span>手指按住并拖动，轨迹会画在这里</span>
+        </div>
+      </div>
+
+      <div class="zq_stats">
+        <div class="zq_stat"><em id="zq_c_start">0</em><span>touchstart</span></div>
+        <div class="zq_stat"><em id="zq_c_move">0</em><span>touchmove</span></div>
+        <div class="zq_stat"><em id="zq_c_end">0</em><span>touchend</span></div>
+        <div class="zq_stat"><em id="zq_c_click">0</em><span>click</span></div>
+      </div>
+
+      <div class="zq_seqrow" id="zq_seq">本轮顺序：<b>等待你的第一次触摸…</b></div>
+
+      <div class="zq_logwrap">
+        <div class="zq_loghead">
+          <span>事件日志</span>
+          <button id="zq_clear">清空</button>
+        </div>
+        <div class="zq_log" id="zq_log"></div>
+      </div>
+
+      <section class="zq_block">
+        <h2>观察记录表</h2>
+        <table>
+          <thead>
+            <tr><th>操作</th><th>实测事件顺序</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>单击</td><td>touchstart → touchend → <code>click</code></td></tr>
+            <tr><td>向上拖动</td><td>touchstart → touchmove × N → touchend → click</td></tr>
+            <tr><td>向左快速滑</td><td>touchstart → touchmove × 少量 → touchend → click</td></tr>
+            <tr><td>双指触摸</td><td>touchstart → touchmove（touches.length 为 2）→ touchend → touchend</td></tr>
+            <tr><td>长按后抬起</td><td>touchstart →（中间无 move）→ touchend → click</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-top:12px;font-size:12px;line-height:2;color:#8b96a6">
+          拖动越快，同样距离下 <code>touchmove</code> 次数越少；慢慢拖则每次移动都会触发，日志里能看到连续的坐标变化。
+        </p>
+      </section>
+
+      <section class="zq_block">
+        <h2>三个验收问题</h2>
+        <div class="zq_qa">
+          <article>
+            <h3>① 一次拖动里 touchmove 大约触发多少次？和距离有什么关系？</h3>
+            <p>
+              touchmove 的触发频率跟着屏幕刷新率走，大致每 8~16ms 一次，一秒拖动约 50~70 次。
+              同样的时间里，手指移动距离越大，次数越多；慢慢拖时次数主要取决于时间，快滑时取决于距离。
+              所以一次 300px 的慢拖可能有五六十次，而 300px 的快甩只有十几次。
+            </p>
+          </article>
+          <article>
+            <h3>② click 出现在 touchend 之前还是之后？</h3>
+            <p>
+              之后。点按序列是 touchstart → touchend → click，click 由浏览器在 touchend 之后补发，
+              并且只有「按下与抬起都在同一个元素上、且没有被 preventDefault 拦掉」时才会补发。
+              所以两套逻辑都写就会执行两次，需要二选一或 preventDefault。
+            </p>
+          </article>
+          <article>
+            <h3>③ 如果把 touchend 换成 touchcancel，会发生什么？</h3>
+            <p>
+              正常抬手就再也收不到回调了：日志里只剩 touchstart 和 touchmove，看不到抬手记录。
+              后果是状态卡住——比如 this 次拖动的起点坐标一直留着，下一次滑动会被算成一段超长的位移，
+              直接跳到最末尾。touchcancel 只在被系统打断（来电、通知横幅、手势返回）时触发，
+              它的作用是清理状态，不能替代 touchend 收尾。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <p class="zq_foot"><a href="./index.html" target="_top">← 返回课堂实践中心</a></p>
+    </div>
+
+    <script>
+      var zq_pad = document.getElementById('zq_pad');
+      var zq_canvas = document.getElementById('zq_canvas');
+      var zq_ctx = zq_canvas.getContext('2d');
+      var zq_log = document.getElementById('zq_log');
+      var zq_seq = document.getElementById('zq_seq');
+
+      var zq_c = {
+        start: document.getElementById('zq_c_start'),
+        move: document.getElementById('zq_c_move'),
+        end: document.getElementById('zq_c_end'),
+        click: document.getElementById('zq_c_click')
+      };
+
+      var zq_count = { start: 0, move: 0, end: 0, click: 0 };
+      var zq_order = [];        // 本轮手势的事件顺序
+      var zq_t0 = 0;            // 本轮起始时间，用来算相对时间戳
+      var zq_last = null;       // 上一个触点，用来画轨迹
+      var zq_drawing = false;
+
+      /**
+       * 按容器实际像素尺寸初始化画布，避免高分屏上轨迹发虚
+       */
+      function zq_fitCanvas() {
+        var zq_rect = zq_pad.getBoundingClientRect();
+        var zq_dpr = window.devicePixelRatio || 1;
+        zq_canvas.width = zq_rect.width * zq_dpr;
+        zq_canvas.height = zq_rect.height * zq_dpr;
+        zq_ctx.setTransform(zq_dpr, 0, 0, zq_dpr, 0, 0);
+        zq_ctx.lineWidth = 2;
+        zq_ctx.lineCap = 'round';
+        zq_ctx.strokeStyle = '#d8b26a';
+      }
+
+      /**
+       * 往日志里追加一条事件，带相对时间与触点信息
+       */
+      function zq_push(zq_name, zq_note) {
+        var zq_ms = Date.now() - zq_t0;
+        var zq_div = document.createElement('div');
+        var zq_cls = {
+          touchstart: 'zq_ev_start',
+          touchmove: 'zq_ev_move',
+          touchend: 'zq_ev_end',
+          touchcancel: 'zq_ev_cancel',
+          click: 'zq_ev_click'
+        }[zq_name] || '';
+
+        zq_div.className = zq_cls;
+        zq_div.innerHTML = '<i>+' + zq_ms + 'ms</i>' + zq_name + '　' + (zq_note || '');
+        zq_log.appendChild(zq_div);
+        zq_log.scrollTop = zq_log.scrollHeight;
+
+        // 日志只保留最近 60 条，避免页面越用越卡
+        while (zq_log.children.length > 60) {
+          zq_log.removeChild(zq_log.firstChild);
+        }
+
+        zq_order.push(zq_name);
+        zq_seq.innerHTML = '本轮顺序：<b>' + zq_order.join(' → ') + '</b>';
+      }
+
+      /**
+       * 刷新四个事件计数器
+       */
+      function zq_paintCount() {
+        zq_c.start.textContent = zq_count.start;
+        zq_c.move.textContent = zq_count.move;
+        zq_c.end.textContent = zq_count.end;
+        zq_c.click.textContent = zq_count.click;
+      }
+
+      /**
+       * 手指按下：开启新一轮记录，重置顺序与轨迹
+       */
+      function zq_onStart(zq_e) {
+        var zq_t = zq_e.touches[0];
+        var zq_rect = zq_pad.getBoundingClientRect();
+
+        zq_t0 = Date.now();
+        zq_order = [];
+        zq_count.start++;
+        zq_paintCount();
+        zq_pad.classList.add('zq_active');
+
+        zq_drawing = true;
+        zq_last = { x: zq_t.clientX - zq_rect.left, y: zq_t.clientY - zq_rect.top };
+        zq_ctx.clearRect(0, 0, zq_canvas.width, zq_canvas.height);
+
+        zq_push('touchstart', '手指数 ' + zq_e.touches.length +
+          '　(' + Math.round(zq_last.x) + ', ' + Math.round(zq_last.y) + ')');
+      }
+
+      /**
+       * 手指移动：记录坐标并画出轨迹
+       */
+      function zq_onMove(zq_e) {
+        var zq_t = zq_e.touches[0];
+        var zq_rect = zq_pad.getBoundingClientRect();
+        var zq_now = { x: zq_t.clientX - zq_rect.left, y: zq_t.clientY - zq_rect.top };
+
+        zq_count.move++;
+        zq_paintCount();
+
+        zq_push('touchmove', '手指数 ' + zq_e.touches.length +
+          '　(' + Math.round(zq_now.x) + ', ' + Math.round(zq_now.y) + ')');
+
+        if (zq_drawing) {
+          zq_ctx.beginPath();
+          zq_ctx.moveTo(zq_last.x, zq_last.y);
+          zq_ctx.lineTo(zq_now.x, zq_now.y);
+          zq_ctx.stroke();
+          zq_last = zq_now;
+        }
+      }
+
+      /**
+       * 手指抬起：用 changedTouches 取坐标，结束轨迹
+       */
+      function zq_onEnd(zq_e) {
+        var zq_t = zq_e.changedTouches[0];
+        var zq_rect = zq_pad.getBoundingClientRect();
+
+        zq_count.end++;
+        zq_paintCount();
+        zq_drawing = false;
+
+        zq_push('touchend', '手指数剩 ' + zq_e.touches.length +
+          '　抬手点 (' + Math.round(zq_t.clientX - zq_rect.left) + ', ' +
+          Math.round(zq_t.clientY - zq_rect.top) + ')');
+      }
+
+      /**
+       * 手势被系统打断：记录并清空本轮状态
+       */
+      function zq_onCancel(zq_e) {
+        zq_drawing = false;
+        zq_push('touchcancel', '手指数剩 ' + zq_e.touches.length + '（系统打断）');
+      }
+
+      /**
+       * 点击事件：证明 click 在 touchend 之后补发
+       */
+      function zq_onClick() {
+        zq_count.click++;
+        zq_paintCount();
+        zq_push('click', '浏览器补发');
+      }
+
+      /**
+       * 清空日志与计数，重新开始观察
+       */
+      function zq_onClear() {
+        zq_log.innerHTML = '';
+        zq_count = { start: 0, move: 0, end: 0, click: 0 };
+        zq_order = [];
+        zq_paintCount();
+        zq_seq.innerHTML = '本轮顺序：<b>等待你的第一次触摸…</b>';
+        zq_ctx.clearRect(0, 0, zq_canvas.width, zq_canvas.height);
+        zq_pad.classList.remove('zq_active');
+      }
+
+      zq_pad.addEventListener('touchstart', zq_onStart, { passive: true });
+      zq_pad.addEventListener('touchmove', zq_onMove, { passive: true });
+      zq_pad.addEventListener('touchend', zq_onEnd);
+      zq_pad.addEventListener('touchcancel', zq_onCancel);
+      zq_pad.addEventListener('click', zq_onClick);
+      document.getElementById('zq_clear').addEventListener('click', zq_onClear);
+      window.addEventListener('resize', zq_fitCanvas);
+
+      zq_fitCanvas();
+      zq_paintCount();
+    </script>
+  </body>
+</html>

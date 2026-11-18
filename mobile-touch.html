@@ -1,0 +1,191 @@
+<!doctype html>
+<!--
+  作者：张乾
+  学号：（请填写）
+  建立时间：2026-11-18 14:09
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：移动端触摸交互 · 四关任务总览 — 页内 Tab 切换，用 iframe 承载四个任务页
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>移动端触摸交互 · 四关任务</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+      body {
+        min-height: 100vh;
+        background: #0b0d12;
+        color: #e9e4d9;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .zq_head {
+        padding: 26px 20px 18px;
+        text-align: center;
+        background: radial-gradient(circle at 50% 0%, #1c2431 0%, #0b0d12 72%);
+      }
+
+      .zq_head h1 { font-size: 20px; font-weight: 600; letter-spacing: 5px; }
+
+      .zq_head p { margin-top: 9px; font-size: 12px; letter-spacing: 1px; color: #7b8494; }
+
+      .zq_head a {
+        display: inline-block;
+        margin-top: 12px;
+        font-size: 12px;
+        color: #a98d5c;
+        text-decoration: none;
+      }
+
+      /* 页内切换：四个任务 */
+      .zq_tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 16px 18px;
+      }
+
+      .zq_tab {
+        padding: 12px 4px;
+        border: 1px solid #232b38;
+        border-radius: 11px;
+        background: #141a23;
+        font-family: inherit;
+        font-size: 12.5px;
+        letter-spacing: 1px;
+        line-height: 1.5;
+        color: #93a0b3;
+        transition: 0.22s ease;
+      }
+
+      .zq_tab span {
+        display: block;
+        font-size: 10.5px;
+        letter-spacing: 0;
+        color: #5d6779;
+        transition: 0.22s ease;
+      }
+
+      .zq_tab.zq_on {
+        border-color: #d8b26a;
+        background: linear-gradient(150deg, #2a2317, #17130c);
+        color: #ecd8ad;
+        box-shadow: 0 8px 22px rgba(216, 178, 106, 0.16);
+      }
+
+      .zq_tab.zq_on span { color: #a8946c; }
+
+      /* 任务页容器 */
+      .zq_stage {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 16px 26px;
+      }
+
+      .zq_frame {
+        width: 100%;
+        height: calc(100vh - 214px);
+        min-height: 620px;
+        border: 1px solid #1e2632;
+        border-radius: 14px;
+        background: #0d1117;
+        display: block;
+      }
+
+      .zq_note {
+        margin-top: 12px;
+        font-size: 11.5px;
+        line-height: 1.9;
+        letter-spacing: 0.5px;
+        text-align: center;
+        color: #5f6879;
+      }
+
+      @media (max-width: 520px) {
+        .zq_tabs { grid-template-columns: repeat(2, 1fr); }
+        .zq_frame { height: calc(100vh - 268px); min-height: 560px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="zq_head">
+      <h1>移动端触摸交互</h1>
+      <p>按下 · 滑动 · 缩放 · 摇一摇 —— 四关任务，在这里直接切换</p>
+    </header>
+
+    <nav class="zq_tabs" id="zq_tabs">
+      <button class="zq_tab zq_on" data-page="./mobile-probe.html">
+        ① 事件侦探<span>观察事件顺序</span>
+      </button>
+      <button class="zq_tab" data-page="./mobile-gesture.html">
+        ② 手势卡片<span>左右滑动</span>
+      </button>
+      <button class="zq_tab" data-page="./mobile-zoom.html">
+        ③ 图片查看器<span>双指缩放</span>
+      </button>
+      <button class="zq_tab" data-page="./mobile-sensor.html">
+        ④ 摇一摇<span>抽今日菜谱</span>
+      </button>
+    </nav>
+
+    <main class="zq_stage">
+      <iframe class="zq_frame" id="zq_frame" src="./mobile-probe.html" title="移动端任务页"></iframe>
+      <p class="zq_note">
+        手势与传感器需要真机体验；四个任务页也可以单独打开。<br />
+        <a href="./index.html" style="color:#a98d5c;text-decoration:none">← 返回课堂实践中心</a>
+      </p>
+    </main>
+
+    <script>
+      var zq_tabs = document.getElementById('zq_tabs');
+      var zq_frame = document.getElementById('zq_frame');
+      var zq_buttons = zq_tabs.querySelectorAll('.zq_tab');
+
+      /**
+       * 切换到指定按钮对应的任务页，并同步选中样式与地址栏 hash
+       */
+      function zq_switchTab(zq_btn) {
+        var zq_page = zq_btn.getAttribute('data-page');
+
+        // 先清掉所有按钮的选中状态
+        for (var zq_i = 0; zq_i < zq_buttons.length; zq_i++) {
+          zq_buttons[zq_i].classList.remove('zq_on');
+        }
+        // 再设置当前按钮为选中
+        zq_btn.classList.add('zq_on');
+
+        zq_frame.src = zq_page;
+        history.replaceState(null, '', zq_page.replace('./', '#').replace('.html', ''));
+      }
+
+      /**
+       * 点击任一任务按钮时切换，事件委托绑定在导航容器上
+       */
+      zq_tabs.addEventListener('click', function (zq_e) {
+        var zq_btn = zq_e.target.closest('.zq_tab');
+        if (zq_btn) { zq_switchTab(zq_btn); }
+      });
+
+      /**
+       * 按地址栏 hash 还原上次查看的任务，默认停在第一关
+       */
+      function zq_restore() {
+        var zq_hash = location.hash.replace('#', '');
+        if (!zq_hash) { return; }
+
+        for (var zq_i = 0; zq_i < zq_buttons.length; zq_i++) {
+          if (zq_buttons[zq_i].getAttribute('data-page').indexOf(zq_hash) > -1) {
+            zq_switchTab(zq_buttons[zq_i]);
+            return;
+          }
+        }
+      }
+
+      zq_restore();
+    </script>
+  </body>
+</html>

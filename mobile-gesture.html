@@ -1,0 +1,365 @@
+<!doctype html>
+<!--
+  作者：张乾
+  学号：（请填写）
+  建立时间：2026-11-18 13:55
+  使用大模型：DeepSeek-V4.1-Flash
+  功能名称：任务二 · 手势卡片 — 左右滑动切换中华美食（touch 事件 + 阈值 + 冷却 + 过渡动画）
+-->
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 手机页面必备：不写会整体缩小 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>任务二 · 手势卡片</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+      body {
+        min-height: 100vh;
+        padding: 20px 16px 32px;
+        background: #12100e;
+        color: #f4efe6;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      .zq_page { max-width: 460px; margin: 0 auto; }
+
+      .zq_top { text-align: center; margin-bottom: 18px; }
+
+      .zq_top h1 {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        color: #f4efe6;
+      }
+
+      .zq_top p {
+        margin-top: 8px;
+        font-size: 12px;
+        letter-spacing: 1px;
+        color: #8d8478;
+      }
+
+      /* 卡片视口：overflow 裁掉多余卡片；pan-y 让纵向仍可滚动页面 */
+      .zq_viewport {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .zq_track {
+        display: flex;
+        width: 400%;
+        will-change: transform;
+        transition: transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+      }
+
+      /* 拖动过程中关掉过渡，让卡片跟手 */
+      .zq_track.zq_dragging { transition: none; }
+
+      .zq_slide {
+        width: 25%;
+        aspect-ratio: 3 / 4;
+        padding: 28px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .zq_slide::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .zq_slide_1 { background: linear-gradient(150deg, #c0392b, #7b1e12); }
+      .zq_slide_2 { background: linear-gradient(150deg, #1f7a5a, #0e3b2c); }
+      .zq_slide_3 { background: linear-gradient(150deg, #a9762a, #5a360d); }
+      .zq_slide_4 { background: linear-gradient(150deg, #2f5d8a, #12263a); }
+
+      .zq_no {
+        position: absolute;
+        top: 22px;
+        left: 24px;
+        font-size: 46px;
+        font-weight: 700;
+        line-height: 1;
+        color: rgba(255, 255, 255, 0.28);
+        font-family: Georgia, serif;
+      }
+
+      .zq_tag {
+        position: absolute;
+        top: 26px;
+        right: 24px;
+        padding: 4px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 999px;
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .zq_slide h2 {
+        position: relative;
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: 4px;
+        color: #fff;
+      }
+
+      .zq_slide p {
+        position: relative;
+        margin-top: 14px;
+        font-size: 13.5px;
+        line-height: 1.95;
+        color: rgba(255, 255, 255, 0.82);
+      }
+
+      /* 底部信息条 */
+      .zq_meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 18px;
+        padding: 0 4px;
+      }
+
+      .zq_dots { display: flex; gap: 8px; }
+
+      .zq_dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #4a443c;
+        transition: background 0.25s ease, width 0.25s ease;
+      }
+
+      .zq_dot.zq_on { width: 20px; border-radius: 4px; background: #d8b26a; }
+
+      .zq_count { font-size: 13px; letter-spacing: 1px; color: #b7ada0; }
+
+      /* 提示条：初始提示 / 边界提示共用 */
+      .zq_hint {
+        margin-top: 16px;
+        padding: 11px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 12.5px;
+        letter-spacing: 1px;
+        text-align: center;
+        color: #b7ada0;
+        transition: color 0.2s ease, background 0.2s ease;
+      }
+
+      .zq_hint.zq_warn { background: rgba(216, 178, 106, 0.16); color: #e6c584; }
+
+      .zq_note {
+        margin-top: 22px;
+        font-size: 12px;
+        line-height: 2;
+        color: #6f675d;
+        text-align: center;
+      }
+
+      .zq_note a { color: #c8a978; text-decoration: none; border-bottom: 1px dashed #6f5a38; }
+    </style>
+  </head>
+  <body>
+    <div class="zq_page">
+      <header class="zq_top">
+        <h1>中华美食卡片</h1>
+        <p>左右滑动切换菜品</p>
+      </header>
+
+      <div class="zq_viewport" id="zq_viewport">
+        <div class="zq_track" id="zq_track">
+          <section class="zq_slide zq_slide_1">
+            <span class="zq_no">01</span>
+            <span class="zq_tag">川菜</span>
+            <h2>麻婆豆腐</h2>
+            <p>麻辣鲜香烫，豆腐嫩得能用勺子分块，一勺红油拌饭最下饭。</p>
+          </section>
+          <section class="zq_slide zq_slide_2">
+            <span class="zq_no">02</span>
+            <span class="zq_tag">浙菜</span>
+            <h2>西湖醋鱼</h2>
+            <p>草鱼现杀现烹，糖醋汁薄薄一层，酸甜里透着蟹味般的鲜。</p>
+          </section>
+          <section class="zq_slide zq_slide_3">
+            <span class="zq_no">03</span>
+            <span class="zq_tag">浙菜</span>
+            <h2>东坡肉</h2>
+            <p>黄酒慢煨三小时，方方正正一块，筷子一夹就颤，入口即化不腻。</p>
+          </section>
+          <section class="zq_slide zq_slide_4">
+            <span class="zq_no">04</span>
+            <span class="zq_tag">苏菜</span>
+            <h2>蟹粉小笼</h2>
+            <p>十八道褶收口，皮薄能透光，先咬小口吸汤，再蘸姜醋整只吃。</p>
+          </section>
+        </div>
+      </div>
+
+      <div class="zq_meta">
+        <div class="zq_dots" id="zq_dots"></div>
+        <div class="zq_count" id="zq_count">第 1 / 4 张</div>
+      </div>
+
+      <div class="zq_hint" id="zq_hint">左右滑动查看下一道菜</div>
+
+      <p class="zq_note">
+        触摸事件页面，请用手机打开；电脑可在开发者工具里切换到设备模式。<br />
+        <a href="./index.html" target="_top">← 返回课堂实践中心</a>
+      </p>
+    </div>
+
+    <script>
+      var zq_viewport = document.getElementById('zq_viewport');
+      var zq_track = document.getElementById('zq_track');
+      var zq_hint = document.getElementById('zq_hint');
+      var zq_count = document.getElementById('zq_count');
+      var zq_dots = document.getElementById('zq_dots');
+
+      var zq_total = 4;          // 卡片总数
+      var zq_index = 0;          // 当前第几张（从 0 开始）
+      var zq_threshold = 40;     // 滑动阈值：小于它算误触，不切换
+      var zq_cooldown = 300;     // 冷却时间：防止快速连滑一次跳两张
+      var zq_lastSwitch = 0;     // 上一次切换成功的时间戳
+      var zq_startX = 0;         // 按下时的横坐标
+      var zq_startY = 0;         // 按下时的纵坐标
+      var zq_timer = null;       // 提示文案的复原定时器
+
+      /**
+       * 按当前序号渲染卡片位置、页码与圆点状态
+       */
+      function zq_paint() {
+        zq_track.style.transform = 'translate3d(' + (-zq_index * 25) + '%, 0, 0)';
+        zq_count.textContent = '第 ' + (zq_index + 1) + ' / ' + zq_total + ' 张';
+
+        var zq_html = '';
+        for (var zq_i = 0; zq_i < zq_total; zq_i++) {
+          zq_html += '<span class="zq_dot' + (zq_i === zq_index ? ' zq_on' : '') + '"></span>';
+        }
+        zq_dots.innerHTML = zq_html;
+      }
+
+      /**
+       * 在提示条上显示一条临时文案，稍后自动恢复默认提示
+       */
+      function zq_tip(zq_text, zq_isWarn) {
+        clearTimeout(zq_timer);
+        zq_hint.textContent = zq_text;
+        zq_hint.className = 'zq_hint' + (zq_isWarn ? ' zq_warn' : '');
+        zq_timer = setTimeout(function () {
+          zq_hint.textContent = '左右滑动查看下一道菜';
+          zq_hint.className = 'zq_hint';
+        }, 1600);
+      }
+
+      /**
+       * 切换到指定序号的卡片，越界时给出边界提示并保持原位
+       */
+      function zq_goTo(zq_next) {
+        if (zq_next < 0) {
+          zq_tip('已经是第一张了', true);
+          return;
+        }
+        if (zq_next > zq_total - 1) {
+          zq_tip('已经是最后一张了', true);
+          return;
+        }
+        zq_index = zq_next;
+        zq_lastSwitch = Date.now();
+        zq_paint();
+      }
+
+      /**
+       * 手指按下：记录起点坐标，并关掉过渡让卡片跟手
+       */
+      function zq_onStart(zq_e) {
+        var zq_t = zq_e.touches[0];
+        zq_startX = zq_t.clientX;
+        zq_startY = zq_t.clientY;
+        zq_track.classList.add('zq_dragging');
+      }
+
+      /**
+       * 手指移动：跟随手指横向位移，超出边界时按 1/3 阻尼偏移，制造"拉到头"的手感
+       */
+      function zq_onMove(zq_e) {
+        var zq_t = zq_e.touches[0];
+        var zq_dx = zq_t.clientX - zq_startX;
+        var zq_dy = zq_t.clientY - zq_startY;
+
+        // 纵向位移更大时交给页面滚动，不做横向跟随
+        if (Math.abs(zq_dy) > Math.abs(zq_dx)) { return; }
+
+        var zq_edge = (zq_index === 0 && zq_dx > 0) || (zq_index === zq_total - 1 && zq_dx < 0);
+        var zq_offset = zq_edge ? zq_dx / 3 : zq_dx;
+        // 位移百分比是相对轨道宽度（4 张卡片宽）计算的，所以要除以总张数换算
+        var zq_percent = -zq_index * 25 + (zq_offset / (zq_viewport.clientWidth * zq_total)) * 100;
+
+        zq_track.style.transform = 'translate3d(' + zq_percent + '%, 0, 0)';
+      }
+
+      /**
+       * 手指抬起：用 changedTouches 算位移，超过阈值才切换，并做冷却判断
+       */
+      function zq_onEnd(zq_e) {
+        zq_track.classList.remove('zq_dragging');
+
+        var zq_t = zq_e.changedTouches[0];
+        var zq_dx = zq_t.clientX - zq_startX;
+        var zq_dy = zq_t.clientY - zq_startY;
+
+        // 短距离或纵向为主：回弹到原位，视为误触
+        if (Math.abs(zq_dx) < zq_threshold || Math.abs(zq_dy) > Math.abs(zq_dx)) {
+          zq_paint();
+          if (Math.abs(zq_dx) < zq_threshold && Math.abs(zq_dy) < zq_threshold) {
+            zq_tip('滑得太短了，再滑远一点', true);
+          }
+          return;
+        }
+
+        // 冷却期内忽略，避免一次快滑被识别成两次
+        if (Date.now() - zq_lastSwitch < zq_cooldown) {
+          zq_paint();
+          return;
+        }
+
+        zq_goTo(zq_dx < 0 ? zq_index + 1 : zq_index - 1);
+        zq_paint();
+      }
+
+      /**
+       * 手势被系统打断（来电、通知横幅）时复位，避免状态卡住
+       */
+      function zq_onCancel() {
+        zq_track.classList.remove('zq_dragging');
+        zq_paint();
+      }
+
+      zq_viewport.addEventListener('touchstart', zq_onStart, { passive: true });
+      zq_viewport.addEventListener('touchmove', zq_onMove, { passive: true });
+      zq_viewport.addEventListener('touchend', zq_onEnd);
+      zq_viewport.addEventListener('touchcancel', zq_onCancel);
+
+      // 首次渲染，显示第 1 张与 4 个圆点
+      zq_paint();
+    </script>
+  </body>
+</html>
