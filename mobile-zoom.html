@@ -135,6 +135,43 @@
       .zq_faq p { font-size: 12.5px; line-height: 2.05; color: #9a9ca4; }
 
       .zq_faq a { color: #c0a877; text-decoration: none; }
+
+      /* 演示视频 */
+      .zq_video_box {
+        margin-top: 18px;
+        padding: 16px;
+        border: 1px solid #23262e;
+        border-radius: 12px;
+        background: #14161c;
+      }
+
+      .zq_video_box h2 {
+        margin-bottom: 12px;
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        color: #d8c8a6;
+      }
+
+      .zq_video {
+        display: block;
+        width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
+        border-radius: 10px;
+        background: #000;
+      }
+
+      .zq_video_box p {
+        margin-top: 10px;
+        font-size: 12px;
+        line-height: 1.9;
+        text-align: center;
+        color: #86888f;
+      }
+
+      .zq_foot { margin-top: 26px; text-align: center; font-size: 12px; color: #5c6675; }
+      .zq_foot a { color: #a98d5c; text-decoration: none; }
     </style>
   </head>
   <body>
@@ -161,10 +198,25 @@
           ① 第一帧只记录距离，不参与计算，避免拿 0 去做除数；<br />
           ② 每一帧都用「两指中点」当锚点：先把这个点在图片上的位置反算出来，缩放后让它仍落在原来的屏幕位置；<br />
           ③ 两指距离用同一套 client 坐标计算，不混用 page 坐标；<br />
-          ④ 每次 touchstart 都把上一轮的距离清空，防止用残留数据比较导致画面突跳。<br />
-          <a href="./index.html" target="_top">← 返回课堂实践中心</a>
+          ④ 每次 touchstart 都把上一轮的距离清空，防止用残留数据比较导致画面突跳。
         </p>
       </section>
+
+      <!-- 操作演示视频 -->
+      <section class="zq_video_box">
+        <h2>操作演示</h2>
+        <video
+          class="zq_video"
+          src="./videos/zoom-demo.mp4"
+          controls
+          playsinline
+          webkit-playsinline
+          preload="metadata"
+        ></video>
+        <p>双指缩放、双击切换 1×/2×、放大后单指拖动</p>
+      </section>
+
+      <p class="zq_foot"><a href="./index.html" target="_top">← 返回课堂实践中心</a></p>
     </div>
 
     <script>
