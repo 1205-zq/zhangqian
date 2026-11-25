@@ -1,0 +1,279 @@
+/* ============================================================
+   zq_main.css — LLM 实践展示页样式
+   作者：张乾　学号：24002120504
+   建立时间：2026-11-25
+   使用大模型：DeepSeek-V4.1-Flash
+   功能名称：llm-demo.html 页面视觉样式（浅米色纸张底 + 墨蓝文字 + 金棕点缀）
+   ============================================================ */
+
+:root {
+  --zq_ink: #17202e;
+  --zq_ink_soft: #4d5a6d;
+  --zq_ink_mute: #8b95a6;
+  --zq_gold: #b08d4f;
+  --zq_gold_soft: #d8c39a;
+  --zq_paper: #faf7f1;
+  --zq_card: #ffffff;
+  --zq_line: #e7e0d3;
+  --zq_radius: 18px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  background: var(--zq_paper);
+  color: var(--zq_ink);
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 背景画布：铺满视口，位于内容之下 */
+.zq-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.zq-page {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 72px;
+}
+
+/* ---------- 页头 ---------- */
+.zq-subpage__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--zq_line);
+}
+
+.zq-subpage__title {
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.zq-back {
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--zq_gold);
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid var(--zq_gold_soft);
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+
+.zq-back:hover {
+  color: #fff;
+  background: var(--zq_gold);
+  border-color: var(--zq_gold);
+}
+
+/* ---------- 顶部概览 ---------- */
+.zq-llm-hero {
+  margin-top: 34px;
+  padding: 40px 34px 34px;
+  border: 1px solid var(--zq_line);
+  border-radius: var(--zq_radius);
+  background: linear-gradient(160deg, #ffffff 0%, #fdfaf4 100%);
+  box-shadow: 0 18px 46px rgba(23, 32, 46, 0.06);
+  text-align: center;
+}
+
+.zq-llm-hero__tag {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: rgba(176, 141, 79, 0.1);
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--zq_gold);
+}
+
+.zq-llm-hero__title {
+  margin-top: 18px;
+  font-size: clamp(22px, 3.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.zq-llm-hero__desc {
+  margin-top: 12px;
+  font-size: 13.5px;
+  letter-spacing: 0.5px;
+  color: var(--zq_ink_soft);
+}
+
+.zq-llm-hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 26px;
+  list-style: none;
+}
+
+.zq-llm-hero__stats li {
+  min-width: 132px;
+  padding: 14px 18px;
+  border: 1px solid var(--zq_line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.zq-llm-hero__stats strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--zq_gold);
+}
+
+.zq-llm-hero__stats span {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--zq_ink_mute);
+}
+
+/* ---------- 案例卡片 ---------- */
+.zq-llm-case {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  align-items: center;
+  margin-top: 30px;
+  padding: 30px;
+  border: 1px solid var(--zq_line);
+  border-radius: var(--zq_radius);
+  background: var(--zq_card);
+  box-shadow: 0 12px 34px rgba(23, 32, 46, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.zq-llm-case:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px rgba(23, 32, 46, 0.09);
+}
+
+.zq-llm-case--reverse .zq-llm-case__info { order: 2; }
+.zq-llm-case--reverse .zq-llm-case__figure { order: 1; }
+
+.zq-llm-case__index {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--zq_gold_soft);
+}
+
+.zq-llm-case__title {
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+.zq-llm-case__desc {
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--zq_ink_soft);
+}
+
+.zq-llm-case__list {
+  margin-top: 16px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.zq-llm-case__list li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 7px;
+  font-size: 13px;
+  color: var(--zq_ink_soft);
+}
+
+.zq-llm-case__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--zq_gold_soft);
+}
+
+.zq-llm-case__link {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: var(--zq_ink);
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #fff;
+  text-decoration: none;
+  transition: 0.25s ease;
+}
+
+.zq-llm-case__link:hover {
+  background: var(--zq_gold);
+  transform: translateX(3px);
+}
+
+.zq-llm-case__figure {
+  overflow: hidden;
+  border: 1px solid var(--zq_line);
+  border-radius: 14px;
+  background: #f4f1ea;
+}
+
+.zq-llm-case__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.zq-llm-case__figure figcaption {
+  padding: 9px 12px;
+  border-top: 1px solid var(--zq_line);
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  color: var(--zq_ink_mute);
+  background: #fdfbf7;
+}
+
+.zq-llm-footer {
+  margin-top: 34px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--zq_ink_mute);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 820px) {
+  .zq-llm-case {
+    grid-template-columns: 1fr;
+    padding: 22px;
+    gap: 20px;
+  }
+
+  .zq-llm-case--reverse .zq-llm-case__info { order: 1; }
+  .zq-llm-case--reverse .zq-llm-case__figure { order: 2; }
+
+  .zq-llm-hero { padding: 28px 20px 24px; }
+  .zq-page { padding: 26px 16px 54px; }
+}

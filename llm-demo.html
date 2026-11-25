@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<!--
+  姓名：【张乾】 | 学号：【24002120504】 |
+  时间：2026-11-25 | 大模型：DeepSeek-V4.1-Flash |
+  功能名称：LLM 实践完成测试展示 — 四个大模型能力案例（客服 / 知识库 / 图像识别 / 语音识别）
+-->
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 实践测试展示 | 课程作业项目</title>
+  <link rel="stylesheet" href="./css/zq_main.css">
+</head>
+<body>
+  <canvas id="zqCanvas" class="zq-canvas"></canvas>
+
+  <main class="zq-page">
+    <div class="zq-subpage__head">
+      <h1 class="zq-subpage__title">LLM 实践完成测试展示</h1>
+      <a class="zq-back" href="./index.html">← 返回首页</a>
+    </div>
+
+    <section class="zq-llm-hero">
+      <p class="zq-llm-hero__tag">大模型应用实践 · 测试验收</p>
+      <h2 class="zq-llm-hero__title">四项 LLM 能力已全部跑通</h2>
+      <p class="zq-llm-hero__desc">
+        姓名：张乾　学号：24002120504　项目类别：自选　技术栈：Node.js + Express + MySQL + 原生前端
+      </p>
+      <ul class="zq-llm-hero__stats">
+        <li><strong>4</strong><span>大模型能力</span></li>
+        <li><strong>2</strong><span>模型服务商</span></li>
+        <li><strong>100%</strong><span>真实接口调用</span></li>
+      </ul>
+    </section>
+
+    <section class="zq-llm-case">
+      <div class="zq-llm-case__info">
+        <span class="zq-llm-case__index">01</span>
+        <h2 class="zq-llm-case__title">AI 客服测试展示</h2>
+        <p class="zq-llm-case__desc">
+          限定人设的智能客服「中华美食街 · 客服小七」，只回答营业时间、招牌菜、配送范围三类问题，
+          其余问题礼貌拒绝并引导留言。
+        </p>
+        <ul class="zq-llm-case__list">
+          <li>测试提问：招牌菜有哪些推荐？</li>
+          <li>模型回复：宫保鸡丁、鱼香肉丝、辣子鸡等川菜经典，并推荐清蒸鲈鱼</li>
+          <li>人设生效：工具栏展示可回答的三类问题，超范围问题会统一拒绝</li>
+          <li>技术要点：system 提示词约束 + 多轮上下文 + 硅基流动代理调用</li>
+        </ul>
+        <a class="zq-llm-case__link" href="./service.html">打开在线客服 →</a>
+      </div>
+      <figure class="zq-llm-case__figure">
+        <img class="zq-llm-case__img" src="./images/zq_llm_service.png" alt="AI 客服测试截图：推荐招牌菜">
+        <figcaption>在线客服页 · POST /api/service/chat</figcaption>
+      </figure>
+    </section>
+
+    <section class="zq-llm-case zq-llm-case--reverse">
+      <div class="zq-llm-case__info">
+        <span class="zq-llm-case__index">02</span>
+        <h2 class="zq-llm-case__title">知识库测试展示</h2>
+        <p class="zq-llm-case__desc">
+          上传文档构建专属知识库（RAG）：8 个文件切分为 8 个片段并生成 1024 维向量，
+          提问时先检索再交给大模型作答，答案附带引用来源与相似度。
+        </p>
+        <ul class="zq-llm-case__list">
+          <li>知识库规模：8 个文件 / 8 个片段（docx、pptx、txt）</li>
+          <li>测试提问：你们几点关门？</li>
+          <li>模型回复：常规 21:00 关门，除夕 18:00，春节期间另作安排</li>
+          <li>引用片段：营业时间与节假日.txt 第 1 段，相似度 0.6817</li>
+        </ul>
+        <a class="zq-llm-case__link" href="./kb.html">打开知识库问答 →</a>
+      </div>
+      <figure class="zq-llm-case__figure">
+        <img class="zq-llm-case__img" src="./images/zq_llm_kb.png" alt="知识库测试截图：营业时间问答与引用片段">
+        <figcaption>知识库问答页 · GET /api/kb/files + POST /api/kb/ask</figcaption>
+      </figure>
+    </section>
+
+    <section class="zq-llm-case">
+      <div class="zq-llm-case__info">
+        <span class="zq-llm-case__index">03</span>
+        <h2 class="zq-llm-case__title">图像识别测试展示</h2>
+        <p class="zq-llm-case__desc">
+          上传图片，多模态模型自动描述画面内容。测试图为一组叠放的面包，
+          模型准确识别出法棍、可颂与芝麻圆面包的层次关系与暖色背景。
+        </p>
+        <ul class="zq-llm-case__list">
+          <li>测试图片：三款面包叠成塔（local 上传）</li>
+          <li>识别结果：底层芝麻圆面包、中层法棍、顶层金黄可颂，浅黄背景</li>
+          <li>使用模型：Qwen3-VL-8B-Instruct，单次消耗 1870 tokens</li>
+          <li>技术要点：图片转 base64 走多模态 messages，后端隐藏 Key</li>
+        </ul>
+        <a class="zq-llm-case__link" href="./vision.html">打开图像识别 →</a>
+      </div>
+      <figure class="zq-llm-case__figure">
+        <img class="zq-llm-case__img" src="./images/zq_llm_vision.png" alt="图像识别测试截图：面包图片与描述">
+        <figcaption>图像识别页 · POST /api/vision/describe</figcaption>
+      </figure>
+    </section>
+
+    <section class="zq-llm-case zq-llm-case--reverse">
+      <div class="zq-llm-case__info">
+        <span class="zq-llm-case__index">04</span>
+        <h2 class="zq-llm-case__title">语音识别测试展示</h2>
+        <p class="zq-llm-case__desc">
+          上传音频或用麦克风录制，七牛 Qwen-Audio 模型把语音转写成文字。
+          测试用 1 分 57 秒的歌曲片段，逐句转写出完整歌词。
+        </p>
+        <ul class="zq-llm-case__list">
+          <li>测试音频：七里香 (DJ版).mp3，时长 1:57</li>
+          <li>识别结果：完整歌词文本，可直接复制</li>
+          <li>使用模型：qwen-audio-3.0-asr-flash（七牛云）</li>
+          <li>技术要点：multipart 转发 /audio/transcriptions，前端支持录音与上传</li>
+        </ul>
+        <a class="zq-llm-case__link" href="./asr.html">打开语音识别 →</a>
+      </div>
+      <figure class="zq-llm-case__figure">
+        <img class="zq-llm-case__img" src="./images/zq_llm_asr.png" alt="语音识别测试截图：歌词转写结果">
+        <figcaption>语音识别页 · POST /api/asr/transcribe</figcaption>
+      </figure>
+    </section>
+
+    <p class="zq-llm-footer">以上截图均来自本项目本地运行的真实测试，接口返回与控制台日志可在对应页面复现。</p>
+  </main>
+
+  <script src="./js/zq_canvas.js"></script>
+</body>
+</html>
